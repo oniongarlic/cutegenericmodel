@@ -14,20 +14,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += \
-        main.cpp \    
-    dummyitem.cpp \
-    abstractobjectmodel.cpp \
-    dummyitemmodel.cpp
+INCLUDEPATH += $$PWD/../libcutegenericmodel
+DEPENDPATH += $$PWD/../libcutegenericmodel
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+unix:!macx: LIBS += -L$$OUT_PWD/../libcutegenericmodel/ -lcutegenericmodel
+win32: LIBS += -L$$OUT_PWD/../libcutegenericmodel/release/ -lcutegenericmodel
+
+SOURCES += \
+    main.cpp \    
+    dummyitem.cpp \
+    dummyitemmodel.cpp
 
 HEADERS += \    
     dummyitem.h \
-    abstractobjectmodel.h \
     dummyitemmodel.h
 
 RESOURCES += \
@@ -35,3 +34,8 @@ RESOURCES += \
 
 DISTFILES += \
     cutegenericmodel.pri
+
+# Default rules for deployment.
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target

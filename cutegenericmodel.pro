@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS += libcutegenericmodel
-SUBDIRS += test
+SUBDIRS += example
 
