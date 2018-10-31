@@ -6,7 +6,7 @@
 #include "abstractobjectmodel.h"
 #include "dummyitem.h"
 
-class DummyItemModel : public AbstractObjectModel
+class DummyItemModel : public Cute::AbstractObjectModel
 {
     Q_OBJECT
 public:

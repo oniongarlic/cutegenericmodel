@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 
+namespace Cute {
+
 class AbstractObjectModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -19,6 +21,7 @@ public:
     Q_INVOKABLE QVariantMap get(int index) const;
     Q_INVOKABLE QObject *getObject(int index) const;
     Q_INVOKABLE QObject *getKey(const QString key) const;
+    Q_INVOKABLE QObject *getId(int id);
 
     Q_INVOKABLE bool append(QObject *item);
     Q_INVOKABLE bool remove(int index);
@@ -34,6 +37,8 @@ protected:
     bool m_has_key;
     int m_key_property_id;
     const char *m_key_name;
+    bool m_has_id;
+
     const QMetaObject *m_meta;
 
     void resolveProperties();
@@ -44,5 +49,7 @@ private:
     QMap<QString, int>m_index;
     QHash<int, QByteArray> m_properties;
 };
+
+}
 
 #endif // ABSTRACTOBJECTMODEL_H

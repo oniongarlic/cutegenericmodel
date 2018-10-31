@@ -3,11 +3,14 @@
 #include <QDebug>
 #include <QMetaProperty>
 
+using namespace Cute;
+
 AbstractObjectModel::AbstractObjectModel(int meta_id, QObject *parent)
     : QAbstractListModel(parent),
       m_metaid(meta_id),      
       m_has_key(false),
       m_key_name(nullptr),
+      m_has_id(false),
       m_meta(nullptr)
 {    
     resolveProperties();
@@ -26,6 +29,9 @@ void AbstractObjectModel::resolveProperties()
         qDebug() << p.name() << p.isReadable() << p.isWritable() << p.typeName() << p.type() << p.isEnumType() << p.isStored();
 
         m_properties.insert(Qt::UserRole+i, p.name());
+        if (QString(p.name())=="id" && p.type()==QVariant::Int) {
+            m_has_id=true;
+        }
     }
 }
 
@@ -86,6 +92,22 @@ QObject *AbstractObjectModel::getKey(const QString key) const
     return getObject(m_index.value(key, -1));
 }
 
+QObject *AbstractObjectModel::getId(int id)
+{
+    if (m_has_id==false) {
+        qWarning("ID not enabled for model");
+        return nullptr;
+    }
+
+    for (int i = 0; i < m_data.size(); ++i) {
+        QObject *o=m_data.at(i);
+        int oid=o->property("id").toInt();
+        if (oid==id)
+            return o;
+    }
+    return nullptr;
+}
+
 QHash<int, QByteArray> AbstractObjectModel::roleNames() const
 {
     return m_properties;
@@ -128,8 +150,7 @@ bool AbstractObjectModel::append(QObject *item)
     }
 
     int p=m_data.size();
-    beginInsertRows(QModelIndex(), p, p);
-    item->setParent(this);
+    beginInsertRows(QModelIndex(), p, p);    
     m_data.append(item);
     if (m_has_key && m_key_name) {
         QString key=item->property(m_key_name).toString();
