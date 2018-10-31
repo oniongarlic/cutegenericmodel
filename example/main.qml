@@ -8,12 +8,24 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Tabs")
+    title: qsTr("CuteGenericModel example app")
 
     header: ToolBar {
         RowLayout {
             ToolButton {
-                text: "Meh"
+                text: "Quit"
+                onClicked: Qt.quit()
+            }
+            ToolButton {
+                text: "Clear all"
+                onClicked: diModel.clear();
+            }
+            TextField {
+                placeholderText: "Search"
+                onAccepted: {
+                    console.debug("Search: "+text)
+                    diModel.search(text)
+                }
             }
         }
     }
@@ -68,7 +80,9 @@ ApplicationWindow {
 
     footer: ToolBar {
         RowLayout {
-
+            Text {
+                text: diModel.count
+            }
         }
     }
 
