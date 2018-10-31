@@ -30,8 +30,7 @@ int main(int argc, char *argv[])
         DummyItem *dm=new DummyItem(&dim);
 
         dm->setProperty("id", id);
-        dm->setProperty("name", "Tuoli: ");
-        dm->setParent(dm);
+        dm->setProperty("name", "Tuoli: ");        
         dim.append(dm);
     }
 
