@@ -79,7 +79,7 @@ QVariant AbstractObjectModel::data(const QModelIndex &index, int role) const
 QObject *AbstractObjectModel::getKey(const QString key) const
 {
     if (m_has_key==false) {
-        qWarning("Key not enable for model");
+        qWarning("Key indexing not enabled for model");
         return nullptr;
     }
 
