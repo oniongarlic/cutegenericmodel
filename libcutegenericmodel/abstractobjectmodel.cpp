@@ -172,6 +172,8 @@ bool AbstractObjectModel::remove(int index)
     QObject *o=m_data.at(index);
     if (o->parent()==this)
         o->deleteLater();
+    else
+        emit itemRemoved(o);
     m_data.removeAt(index);    
     endRemoveRows();
 
@@ -189,6 +191,8 @@ void AbstractObjectModel::clear()
         QObject *o=m_data.at(i);
         if (o->parent()==this)
             o->deleteLater();
+        else
+            emit itemRemoved(o);
     }
     m_data.clear();
     m_index.clear();
@@ -200,4 +204,16 @@ void AbstractObjectModel::clear()
 bool AbstractObjectModel::search(const QString needle)
 {
     return false;
+}
+
+void AbstractObjectModel::setList(QObjectList data)
+{
+    if (!m_data.empty())
+        clear();
+    beginResetModel();
+    m_data=data;
+    createIndex();
+    endResetModel();
+    emit countChanged(m_data.size());
+
 }

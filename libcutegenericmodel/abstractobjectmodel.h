@@ -29,8 +29,12 @@ public:
 
     Q_INVOKABLE bool search(const QString needle);
 
+    void setList(QObjectList data);
+
 signals:
     void countChanged(int);
+
+    void itemRemoved(QObject *item);
 
 protected:
     int m_metaid;

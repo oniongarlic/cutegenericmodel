@@ -17,8 +17,12 @@ ApplicationWindow {
                 onClicked: Qt.quit()
             }
             ToolButton {
-                text: "Clear all"
+                text: "Clear 1"
                 onClicked: diModel.clear();
+            }
+            ToolButton {
+                text: "Clear 2"
+                onClicked: diModelL.clear();
             }
             TextField {
                 placeholderText: "Search"
@@ -30,13 +34,29 @@ ApplicationWindow {
         }
     }
 
-    ListView {
-        id: lv
-        model: diModel
+    RowLayout {
         anchors.fill: parent
-        delegate: dummyItemDelegate
-        clip: true
-        spacing: 8
+
+        ListView {
+            id: lv1
+            model: diModel
+            delegate: dummyItemDelegate
+            clip: true
+            spacing: 8
+            Layout.fillWidth: true;
+            Layout.fillHeight: true;
+        }
+
+        ListView {
+            id: lv2
+            model: diModelL
+            delegate: dummyItemDelegate
+            clip: true
+            spacing: 8
+            Layout.fillWidth: true;
+            Layout.fillHeight: true;
+        }
+
     }
 
     Component {
@@ -63,16 +83,16 @@ ApplicationWindow {
                 onClicked: {
                     console.debug(index)
 
-                    var q=diModel.get(index)
+                    var q=wrapper.ListView.view.model.get(index)
                     console.debug(q["name"])
                     console.debug(q["category"])
 
-                    var di=diModel.getItem(index)
+                    var di=wrapper.ListView.view.model.getItem(index)
                     console.debug(di.name)
 
                 }
                 onPressAndHold: {
-                    diModel.remove(index)
+                    wrapper.ListView.view.model.remove(index)
                 }
             }
         }
@@ -82,6 +102,9 @@ ApplicationWindow {
         RowLayout {
             Text {
                 text: diModel.count
+            }
+            Text {
+                text: diModelL.count
             }
         }
     }
