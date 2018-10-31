@@ -24,6 +24,8 @@ public:
     Q_INVOKABLE bool remove(int index);
     Q_INVOKABLE void clear();
 
+    Q_INVOKABLE bool search(const QString needle);
+
 signals:
     void countChanged(int);
 

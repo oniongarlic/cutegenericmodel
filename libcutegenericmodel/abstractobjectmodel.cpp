@@ -164,9 +164,19 @@ bool AbstractObjectModel::remove(int index)
 void AbstractObjectModel::clear()
 {
     beginResetModel();
+    for (int i=0;i<m_data.size();i++) {
+        QObject *o=m_data.at(i);
+        if (o->parent()==this)
+            o->deleteLater();
+    }
     m_data.clear();
     m_index.clear();
     endResetModel();
 
     emit countChanged(m_data.size());
+}
+
+bool AbstractObjectModel::search(const QString needle)
+{
+    return false;
 }
