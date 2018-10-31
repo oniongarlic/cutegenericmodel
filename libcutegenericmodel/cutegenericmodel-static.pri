@@ -1,5 +1,5 @@
 INCLUDEPATH += $$PWD
 
-SOURCES += abstractobjectmodel.cpp
+SOURCES += $$PWD/abstractobjectmodel.cpp
 
-HEADERS += abstractobjectmodel.h
+HEADERS += $$PWD/abstractobjectmodel.h
