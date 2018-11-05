@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
         DummyItem *dm=new DummyItem(&dim1);
 
         dm->setProperty("id", id);
-        dm->setProperty("name", "Tuoli: ");        
+        dm->setProperty("name", id % 2 ? "Tuoli-" : "Kaappi-" );
         dim1.append(dm);
     }
 

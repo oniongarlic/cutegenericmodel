@@ -231,6 +231,22 @@ void AbstractObjectModel::clear()
     emit countChanged(m_data.size());
 }
 
+bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
+ {
+     return v1->property(m_sort_property.toLocal8Bit().constData()) < v2->property(m_sort_property.toLocal8Bit().constData());
+ }
+
+void AbstractObjectModel::sortByProperty(const QString property, SortDirection by)
+{
+    m_sort_property=property;
+    beginResetModel();
+    if (by==SortAsc)
+        std::sort(m_data.begin(), m_data.end(), [this](QObject *v1, QObject *v2){ return compareProperty(v1,v2); });
+    else
+        std::sort(m_data.begin(), m_data.end(), [this](QObject *v1, QObject *v2){ return compareProperty(v2,v1); });
+    endResetModel();
+}
+
 bool AbstractObjectModel::search(const QString needle)
 {
     return false;

@@ -18,6 +18,12 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    enum SortDirection {
+        SortAsc,
+        SortDesc
+    };
+    Q_ENUM(SortDirection)
+
     Q_INVOKABLE QVariantMap get(int index) const;
     Q_INVOKABLE QObject *getObject(int index) const;
     Q_INVOKABLE QObject *getKey(const QString key) const;
@@ -30,9 +36,14 @@ public:
     Q_INVOKABLE bool remove(int index);
     Q_INVOKABLE void clear();
 
+    Q_INVOKABLE void sortByProperty(const QString property, SortDirection by=SortAsc);
+
     Q_INVOKABLE bool search(const QString needle);
 
     void setList(QObjectList data);
+
+
+
 
 signals:
     void countChanged(int);
@@ -48,9 +59,12 @@ protected:
 
     const QMetaObject *m_meta;
 
+    QString m_sort_property;
+
     void resolveProperties();
     void createIndex();
 
+    bool compareProperty(QObject *v1, QObject *v2);
 private:
     QObjectList m_data;
     QMap<QString, int>m_index;

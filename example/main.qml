@@ -24,6 +24,18 @@ ApplicationWindow {
                 text: "Clear 2"
                 onClicked: diModelL.clear();
             }
+            ToolButton {
+                text: "Asc"
+                onClicked: diModel.sortByProperty('id', DummyItemModel.SortAsc);
+            }
+            ToolButton {
+                text: "Desc"
+                onClicked: diModel.sortByProperty('id', DummyItemModel.SortDesc);
+            }
+            ToolButton {
+                text: "Sort Name"
+                onClicked: diModel.sortByProperty('name');
+            }
             TextField {
                 placeholderText: "Search"
                 onAccepted: {
