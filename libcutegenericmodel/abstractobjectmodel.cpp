@@ -147,7 +147,7 @@ bool AbstractObjectModel::append(QObject *item)
     if (m_data.contains(item)) {
         qWarning("Duplicates are not supported in model");
         return false;
-    }
+    }   
 
     int p=m_data.size();
     beginInsertRows(QModelIndex(), p, p);    
@@ -161,6 +161,36 @@ bool AbstractObjectModel::append(QObject *item)
     emit countChanged(m_data.size());
 
     return true;
+}
+
+bool AbstractObjectModel::prepend(QObject *item)
+{
+    if (m_data.contains(item)) {
+        qWarning("Duplicates are not supported in model");
+        return false;
+    }
+
+    beginInsertRows(QModelIndex(), 0, 0);
+    m_data.prepend(item);
+    if (m_has_key && m_key_name) {
+        QString key=item->property(m_key_name).toString();
+        m_index.insert(key, m_data.size());
+    }
+    endInsertRows();
+
+    emit countChanged(m_data.size());
+
+    return true;
+}
+
+bool AbstractObjectModel::contains(QObject *item)
+{
+    return m_data.contains(item);
+}
+
+bool AbstractObjectModel::containsKey(const QString key) const
+{
+    return m_index.contains(key);
 }
 
 bool AbstractObjectModel::remove(int index)

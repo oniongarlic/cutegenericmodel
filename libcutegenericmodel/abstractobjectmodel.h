@@ -24,6 +24,9 @@ public:
     Q_INVOKABLE QObject *getId(int id);
 
     Q_INVOKABLE bool append(QObject *item);
+    Q_INVOKABLE bool prepend(QObject *item);
+    Q_INVOKABLE bool contains(QObject *item);
+    Q_INVOKABLE bool containsKey(const QString key) const;
     Q_INVOKABLE bool remove(int index);
     Q_INVOKABLE void clear();
 
