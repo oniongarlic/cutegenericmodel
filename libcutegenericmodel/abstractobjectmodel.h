@@ -42,9 +42,6 @@ public:
 
     void setList(QObjectList data);
 
-
-
-
 signals:
     void countChanged(int);
 
@@ -65,6 +62,9 @@ protected:
     void createIndex();
 
     bool compareProperty(QObject *v1, QObject *v2);
+
+    virtual QVariant formatProperty(const QObject *data, const QMetaProperty *meta) const;
+
 private:
     QObjectList m_data;
     QMap<QString, int>m_index;

@@ -67,19 +67,19 @@ QVariant AbstractObjectModel::data(const QModelIndex &index, int role) const
 
     int pid=role-Qt::UserRole;
 
-    QMetaProperty p=m_meta->property(pid);
+    const QMetaProperty p=m_meta->property(pid);
 
     if (!p.isValid()) {
         qWarning() << "Invalid role for property requested" << role << pid;
         return QVariant();
     }
 
-    QObject *o=m_data.at(index.row());
+    const QObject *o=m_data.at(index.row());
 
     if (!o)
         return QVariant();
 
-    return QVariant(p.read(o));
+    return formatProperty(o, &p);
 }
 
 QObject *AbstractObjectModel::getKey(const QString key) const
@@ -233,8 +233,13 @@ void AbstractObjectModel::clear()
 
 bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
  {
-     return v1->property(m_sort_property.toLocal8Bit().constData()) < v2->property(m_sort_property.toLocal8Bit().constData());
- }
+    return v1->property(m_sort_property.toLocal8Bit().constData()) < v2->property(m_sort_property.toLocal8Bit().constData());
+}
+
+QVariant AbstractObjectModel::formatProperty(const QObject *data, const QMetaProperty *meta) const
+{
+    return meta->read(data);
+}
 
 void AbstractObjectModel::sortByProperty(const QString property, SortDirection by)
 {
