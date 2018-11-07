@@ -30,20 +30,27 @@ int main(int argc, char *argv[])
     QObjectList data;
 
     // Model owns item
-    for (int id=1;id<100;id++) {
+    for (int id=1;id<25000;id++) {
         DummyItem *dm=new DummyItem(&dim1);
+
+        QDateTime dt=QDateTime::fromMSecsSinceEpoch(random());
+        QDate d=dt.date();
 
         dm->setProperty("id", id);
         dm->setProperty("name", id % 2 ? "Tuoli-" : "Kaappi-" );
+        dm->setProperty("timestamp", dt);
+        dm->setProperty("datestamp", d);        
         dim1.append(dm);
     }
 
     // External list of objects
     for (int id=100;id<200;id++) {
         DummyItem *dm=new DummyItem();
+        QTime t=QTime::fromMSecsSinceStartOfDay(rand() % (86400*1000));
 
         dm->setProperty("id", id);
         dm->setProperty("name", "Hylly");
+        dm->setProperty("time", t);
         data.append(dm);
     }
 

@@ -2,7 +2,8 @@
 
 #include <QDebug>
 
-DummyItem::DummyItem(QObject *parent) : QObject(parent), m_category("notSetableFromProperties")
+DummyItem::DummyItem(QObject *parent) : QObject(parent),
+    m_category("notSetableFromProperties")
 {
     qDebug("new DummyItem");
 }
@@ -15,6 +16,10 @@ DummyItem::~DummyItem()
 DummyItem *DummyItem::fromVariantMap(const QVariantMap &map)
 {
     DummyItem *dm=new DummyItem();
+
+    dm->m_category=map["category"].toString();
+    dm->m_name=map["name"].toString();
+    dm->m_id=map["id"].toInt();
 
     return dm;
 }

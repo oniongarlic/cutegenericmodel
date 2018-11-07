@@ -33,6 +33,14 @@ ApplicationWindow {
                 onClicked: diModel.sortByProperty('id', DummyItemModel.SortDesc);
             }
             ToolButton {
+                text: "Date"
+                onClicked: diModel.sortByProperty('timestamp', DummyItemModel.SortDesc);
+            }
+            ToolButton {
+                text: "Time"
+                onClicked: diModelL.sortByProperty('time', DummyItemModel.SortAsc);
+            }
+            ToolButton {
                 text: "Sort Name"
                 onClicked: diModel.sortByProperty('name');
             }
@@ -78,16 +86,25 @@ ApplicationWindow {
             color: "#9acc9a"
             radius: 4
             width: parent.width
-            height: cl.height
+            height: cl.height+4
             Row {
-                id: cl
-                anchors.margins: 4
+                id: cl                
                 spacing: 8
+
                 Text {
                     text: itemID
                 }
                 Text {
                     text: name
+                }
+                Text {
+                    text: timestamp
+                }
+                Text {
+                    text: datestamp
+                }
+                Text {
+                    text: time
                 }
             }
             MouseArea {
@@ -98,9 +115,13 @@ ApplicationWindow {
                     var q=wrapper.ListView.view.model.get(index)
                     console.debug(q["name"])
                     console.debug(q["category"])
+                    console.debug(q["timestamp"])
+                    console.debug(q["datestamp"])
+                    console.debug(q["time"])
 
                     var di=wrapper.ListView.view.model.getItem(index)
                     console.debug(di.name)
+                    console.debug(di.time)
 
                 }
                 onPressAndHold: {

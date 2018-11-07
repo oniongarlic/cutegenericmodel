@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QDateTime>
 
 class DummyItem : public QObject
 {
@@ -13,6 +14,9 @@ class DummyItem : public QObject
     Q_PROPERTY(QString key MEMBER m_key)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString category READ category NOTIFY categoryChanged)
+    Q_PROPERTY(QDateTime timestamp MEMBER m_timestamp NOTIFY timestampChanged)
+    Q_PROPERTY(QDate datestamp MEMBER m_datestamp NOTIFY datestampChanged)
+    Q_PROPERTY(QTime time MEMBER m_time NOTIFY timeChanged)
 
 public:
     explicit DummyItem(QObject *parent = nullptr);
@@ -30,18 +34,22 @@ private:
 
     QString m_key;
     QString m_name;
+    QString m_category;
+    QDateTime m_timestamp;
+    QDate m_datestamp;
+    QTime m_time;
 
     int id() const;
-
-    QString name() const;
-
-    QString m_category;
+    QString name() const;    
 
 signals:
 
     void idChanged(int id);
     void nameChanged(QString name);
     void categoryChanged(QString category);
+    void timestampChanged();
+    void datestampChanged();
+    void timeChanged();
 
 public slots:
     void setId(int id);
@@ -49,3 +57,4 @@ public slots:
 };
 
 #endif // DUMMYITEM_H
+
