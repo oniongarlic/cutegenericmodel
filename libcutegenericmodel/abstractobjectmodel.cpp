@@ -35,7 +35,7 @@ void AbstractObjectModel::resolveProperties()
     }
 }
 
-void AbstractObjectModel::createIndex()
+void AbstractObjectModel::createKeyIndex()
 {
     if (!m_has_key || !m_key_name)
         return;
@@ -111,6 +111,30 @@ QObject *AbstractObjectModel::getId(int id)
 QHash<int, QByteArray> AbstractObjectModel::roleNames() const
 {
     return m_properties;
+}
+
+bool AbstractObjectModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    bool r=false;
+
+    qDebug() << index << value << role;
+
+    if (!m_iswritable)
+        return r;
+
+    if (!index.isValid())
+        return r;
+
+    QObject *o=m_data.at(index.row());
+    const QMetaObject *m=QMetaType::metaObjectForType(m_metaid);
+
+    QMetaProperty p=m->property(role-Qt::UserRole);
+    if (p.isWritable()) {
+        r=p.write(o, value);
+        emit dataChanged(index, index);
+    }
+
+    return r;
 }
 
 QVariantMap AbstractObjectModel::get(int index) const
@@ -207,7 +231,7 @@ bool AbstractObjectModel::remove(int index)
     m_data.removeAt(index);    
     endRemoveRows();
 
-    createIndex();
+    createKeyIndex();
 
     emit countChanged(m_data.size());
 
@@ -257,13 +281,19 @@ bool AbstractObjectModel::search(const QString needle)
     return false;
 }
 
+bool AbstractObjectModel::refresh(int index)
+{
+    QModelIndex i=createIndex(index, 0);
+    emit dataChanged(i, i);
+}
+
 void AbstractObjectModel::setList(QObjectList data)
 {
     if (!m_data.empty())
         clear();
     beginResetModel();
     m_data=data;
-    createIndex();
+    createKeyIndex();
     endResetModel();
     emit countChanged(m_data.size());
 

@@ -9,6 +9,7 @@ class AbstractObjectModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
+    Q_PROPERTY(bool isWritable MEMBER m_iswritable NOTIFY isWritableChanged)
 
 public:
     explicit AbstractObjectModel(int meta_id, QObject *parent = nullptr);
@@ -17,6 +18,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
+    Q_INVOKABLE bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
     enum SortDirection {
         SortAsc,
@@ -40,11 +42,13 @@ public:
 
     Q_INVOKABLE bool search(const QString needle);
 
+    Q_INVOKABLE bool refresh(int index);
+
     void setList(QObjectList data);
 
 signals:
     void countChanged(int);
-
+    void isWritableChanged();
     void itemRemoved(QObject *item);
 
 protected:
@@ -54,12 +58,14 @@ protected:
     const char *m_key_name;
     bool m_has_id;
 
+    bool m_iswritable;
+
     const QMetaObject *m_meta;
 
     QString m_sort_property;
 
     void resolveProperties();
-    void createIndex();
+    void createKeyIndex();
 
     bool compareProperty(QObject *v1, QObject *v2);
 
@@ -68,7 +74,7 @@ protected:
 private:
     QObjectList m_data;
     QMap<QString, int>m_index;
-    QHash<int, QByteArray> m_properties;
+    QHash<int, QByteArray> m_properties;    
 };
 
 }
