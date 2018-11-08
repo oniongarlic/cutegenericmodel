@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     QObjectList data;
 
     // Model owns item
-    for (int id=1;id<25000;id++) {
+    for (int id=1;id<25;id++) {
         DummyItem *dm=new DummyItem(&dim1);
 
         QDateTime dt=QDateTime::fromMSecsSinceEpoch(random());

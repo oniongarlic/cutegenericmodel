@@ -119,10 +119,16 @@ ApplicationWindow {
                     console.debug(q["datestamp"])
                     console.debug(q["time"])
 
+                    // setData()
+                    time="13:00";
+
                     var di=wrapper.ListView.view.model.getItem(index)
                     console.debug(di.name)
                     console.debug(di.time)
 
+                    // Direct modification, call refresh()
+                    di.name="Clicked!"
+                    wrapper.ListView.view.model.refresh(index)
                 }
                 onPressAndHold: {
                     wrapper.ListView.view.model.remove(index)

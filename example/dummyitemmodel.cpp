@@ -5,6 +5,7 @@ DummyItemModel::DummyItemModel(QObject *parent) :
 {
     m_has_key=true;
     m_key_name="name";
+    m_iswritable=true;
 }
 
 DummyItem *DummyItemModel::getItem(int index) const
