@@ -38,6 +38,8 @@ public:
     Q_INVOKABLE bool remove(int index);
     Q_INVOKABLE void clear();
 
+    Q_INVOKABLE int count() const;
+
     Q_INVOKABLE void sortByProperty(const QString property, SortDirection by=SortAsc);
 
     Q_INVOKABLE bool search(const QString needle);

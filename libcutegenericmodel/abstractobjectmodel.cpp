@@ -255,6 +255,11 @@ void AbstractObjectModel::clear()
     emit countChanged(m_data.size());
 }
 
+int AbstractObjectModel::count() const
+{
+    return m_data.size();
+}
+
 bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
  {
     return v1->property(m_sort_property.toLocal8Bit().constData()) < v2->property(m_sort_property.toLocal8Bit().constData());
@@ -284,7 +289,13 @@ bool AbstractObjectModel::search(const QString needle)
 bool AbstractObjectModel::refresh(int index)
 {
     QModelIndex i=createIndex(index, 0);
+
+    if (!i.isValid())
+        return false;
+
     emit dataChanged(i, i);
+
+    return true;
 }
 
 void AbstractObjectModel::setList(QObjectList data)
