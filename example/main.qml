@@ -45,10 +45,24 @@ ApplicationWindow {
                 onClicked: diModel.sortByProperty('name');
             }
             TextField {
+                Layout.minimumWidth: 64
+                Layout.maximumWidth: 128
                 placeholderText: "Search"
                 onAccepted: {
                     console.debug("Search: "+text)
-                    diModel.search(text)
+                    diModel.search("name", text)
+                    console.debug(diModel.count)                   
+                }
+            }
+            TextField {
+                Layout.maximumWidth: 64
+                placeholderText: "ID"
+                onAccepted: {
+                    var i=parseInt(text);
+                    console.debug("Parsed ID: "+i)
+                    var o=diModel.getId(i)
+                    if (o)
+                        console.debug(o["name"])
                 }
             }
         }
@@ -113,6 +127,7 @@ ApplicationWindow {
                     console.debug(index)
 
                     var q=wrapper.ListView.view.model.get(index)
+                    console.debug(q["id"])
                     console.debug(q["name"])
                     console.debug(q["category"])
                     console.debug(q["timestamp"])
@@ -120,7 +135,7 @@ ApplicationWindow {
                     console.debug(q["time"])
 
                     // setData()
-                    time="13:00";
+                    time="13:00";                    
 
                     var di=wrapper.ListView.view.model.getItem(index)
                     console.debug(di.name)

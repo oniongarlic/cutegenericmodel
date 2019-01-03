@@ -54,7 +54,7 @@ int AbstractObjectModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
 
-    return m_data.size();
+    return m_needle.isEmpty() ? m_data.size() : m_filter_index.size();
 }
 
 QVariant AbstractObjectModel::data(const QModelIndex &index, int role) const
@@ -74,7 +74,7 @@ QVariant AbstractObjectModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    const QObject *o=m_data.at(index.row());
+    const QObject *o=m_data.at(mapIndex(index.row()));
 
     if (!o)
         return QVariant();
@@ -117,15 +117,15 @@ bool AbstractObjectModel::setData(const QModelIndex &index, const QVariant &valu
 {
     bool r=false;
 
-    qDebug() << index << value << role;
-
     if (!m_iswritable)
         return r;
 
     if (!index.isValid())
         return r;
 
-    QObject *o=m_data.at(index.row());
+    int row=mapIndex(index.row());
+
+    QObject *o=m_data.at(row);
     const QMetaObject *m=QMetaType::metaObjectForType(m_metaid);
 
     QMetaProperty p=m->property(role-Qt::UserRole);
@@ -137,14 +137,33 @@ bool AbstractObjectModel::setData(const QModelIndex &index, const QVariant &valu
     return r;
 }
 
+int AbstractObjectModel::mapIndex(int index) const
+{
+    if (m_needle.isNull())
+        return index;
+
+    return m_filter_index.at(index);
+}
+
+/**
+ * @brief AbstractObjectModel::get
+ * @param index
+ * @return
+ */
 QVariantMap AbstractObjectModel::get(int index) const
 {
     QVariantMap vm;
 
-    if (index>m_data.size() || index<0)
-        return vm;
+    if (m_needle.isNull()) {
+        if (index>m_data.size() || index<0)
+            return vm;
+    } else {
+        if (index>m_filter_index.size())
+            return vm;
+    }
 
-    const QObject *o=m_data.at(index);
+    const QObject *o=m_data.at(mapIndex(index));
+
     const QMetaObject *m=QMetaType::metaObjectForType(m_metaid);
 
     for (int i=0;i<m->propertyCount();i++) {
@@ -158,12 +177,37 @@ QVariantMap AbstractObjectModel::get(int index) const
     return vm;
 }
 
+/**
+ * @brief AbstractObjectModel::getObject
+ * @param index
+ * @return
+ */
 QObject *AbstractObjectModel::getObject(int index) const
 {
     if (index>m_data.size() || index<0)
         return nullptr;
 
-    return m_data.at(index);
+    return m_data.at(mapIndex(index));
+}
+
+/**
+ * @brief AbstractObjectModel::findKey
+ * @param key
+ * @return
+ */
+QVariantMap AbstractObjectModel::findKey(const QString key) const
+{
+    return get(m_index.value(key, -1));
+}
+
+/**
+ * @brief AbstractObjectModel::indexKey
+ * @param key
+ * @return
+ */
+int AbstractObjectModel::indexKey(const QString key) const
+{
+    return m_index.value(key, -1);
 }
 
 bool AbstractObjectModel::append(QObject *item)
@@ -241,6 +285,7 @@ bool AbstractObjectModel::remove(int index)
 void AbstractObjectModel::clear()
 {
     beginResetModel();
+    clearFilter();
     for (int i=0;i<m_data.size();i++) {
         QObject *o=m_data.at(i);
         if (o->parent()==this)
@@ -257,7 +302,7 @@ void AbstractObjectModel::clear()
 
 int AbstractObjectModel::count() const
 {
-    return m_data.size();
+    return m_needle.isEmpty() ? m_data.size() : m_filter_index.size();
 }
 
 bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
@@ -273,17 +318,79 @@ QVariant AbstractObjectModel::formatProperty(const QObject *data, const QMetaPro
 void AbstractObjectModel::sortByProperty(const QString property, SortDirection by)
 {
     m_sort_property=property;
+    m_sort_dir=by;
+
+    sortRefresh();
+    searchRefresh();
+}
+
+void AbstractObjectModel::sortRefresh()
+{
     beginResetModel();
-    if (by==SortAsc)
+    if (m_sort_dir==SortAsc)
         std::sort(m_data.begin(), m_data.end(), [this](QObject *v1, QObject *v2){ return compareProperty(v1,v2); });
     else
         std::sort(m_data.begin(), m_data.end(), [this](QObject *v1, QObject *v2){ return compareProperty(v2,v1); });
     endResetModel();
 }
 
-bool AbstractObjectModel::search(const QString needle)
+bool AbstractObjectModel::search(const QString property, const QString needle)
 {
-    return false;
+    m_needle=needle.simplified();
+    m_haystack=property;
+
+    return searchRefresh();
+}
+
+bool AbstractObjectModel::searchRefresh()
+{
+    if (m_needle.isEmpty()) {
+        clearFilter();
+        return false;
+    }
+
+    //bool isNumeric=false;
+    //int num=m_needle.toInt(&isNumeric, 10);
+
+    beginResetModel();
+
+    m_filter_index.clear();
+
+    for (int i=0;i<m_data.size();i++) {
+        QObject *item=m_data.at(i);
+        QVariant hs=item->property(m_haystack.toUtf8());
+        if (!hs.isValid() || hs.isNull())
+            continue;
+
+        QString str;
+
+        switch ((QMetaType::Type)hs.type()) {
+        case QMetaType::QString:
+            str=hs.toString();
+            if (str.contains(m_needle, Qt::CaseInsensitive)) {
+                //qDebug() << "Found match at " << i << " in " << str;
+                m_filter_index.append(i);
+            }
+            break;
+        // XXX: Handle more types
+        default:;
+        }
+    }
+
+    endResetModel();
+    emit countChanged(m_filter_index.size());
+
+    return m_filter_index.size()>0 ? true : false;
+}
+
+void AbstractObjectModel::clearFilter()
+{
+    beginResetModel();
+    m_filter_index.clear();
+    m_needle.clear();
+    endResetModel();
+    emit countChanged(m_data.size());
+    return;
 }
 
 bool AbstractObjectModel::refresh(int index)

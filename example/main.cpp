@@ -12,6 +12,8 @@
 #include "dummyitemmodel.h"
 #include "dummyitem.h"
 
+#define ITEMS_MAX (25000)
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -29,8 +31,9 @@ int main(int argc, char *argv[])
 
     QObjectList data;
 
+    dim1.blockSignals(true);
     // Model owns item
-    for (int id=1;id<25;id++) {
+    for (int id=1;id<ITEMS_MAX;id++) {
         DummyItem *dm=new DummyItem(&dim1);
 
         QDateTime dt=QDateTime::fromMSecsSinceEpoch(random());
@@ -42,9 +45,11 @@ int main(int argc, char *argv[])
         dm->setProperty("datestamp", d);        
         dim1.append(dm);
     }
+    dim1.blockSignals(false);
 
-    // External list of objects
-    for (int id=100;id<200;id++) {
+    dim2.blockSignals(true);
+    // External list of objects    
+    for (int id=100;id<ITEMS_MAX;id++) {
         DummyItem *dm=new DummyItem();
         QTime t=QTime::fromMSecsSinceStartOfDay(rand() % (86400*1000));
 
@@ -53,6 +58,7 @@ int main(int argc, char *argv[])
         dm->setProperty("time", t);
         data.append(dm);
     }
+    dim2.blockSignals(false);
 
     dim2.setList(data);
 

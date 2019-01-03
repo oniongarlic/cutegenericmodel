@@ -2,15 +2,16 @@
 
 #include <QDebug>
 
-DummyItem::DummyItem(QObject *parent) : QObject(parent),
+DummyItem::DummyItem(QObject *parent) :
+    QObject(parent),
     m_category("notSetableFromProperties")
 {
-    qDebug("new DummyItem");
+    //qDebug("new DummyItem");
 }
 
 DummyItem::~DummyItem()
 {
-    qDebug() << "delete DummyItem" << m_id;
+    //qDebug() << "delete DummyItem" << m_id;
 }
 
 DummyItem *DummyItem::fromVariantMap(const QVariantMap &map)

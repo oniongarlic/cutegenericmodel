@@ -27,6 +27,9 @@ public:
     Q_ENUM(SortDirection)
 
     Q_INVOKABLE QVariantMap get(int index) const;
+    Q_INVOKABLE QVariantMap findKey(const QString key) const;
+    Q_INVOKABLE int indexKey(const QString key) const;
+
     Q_INVOKABLE QObject *getObject(int index) const;
     Q_INVOKABLE QObject *getKey(const QString key) const;
     Q_INVOKABLE QObject *getId(int id);
@@ -42,7 +45,7 @@ public:
 
     Q_INVOKABLE void sortByProperty(const QString property, SortDirection by=SortAsc);
 
-    Q_INVOKABLE bool search(const QString needle);
+    Q_INVOKABLE bool search(const QString property, const QString needle);
 
     Q_INVOKABLE bool refresh(int index);
 
@@ -54,6 +57,16 @@ signals:
     void itemRemoved(QObject *item);
 
 protected:
+    void resolveProperties();
+    void createKeyIndex();
+    bool compareProperty(QObject *v1, QObject *v2);
+    void sortRefresh();
+    bool searchRefresh();
+    void clearFilter();
+    int mapIndex(int index) const;
+
+    virtual QVariant formatProperty(const QObject *data, const QMetaProperty *meta) const;
+
     int m_metaid;
     bool m_has_key;
     int m_key_property_id;
@@ -65,18 +78,18 @@ protected:
     const QMetaObject *m_meta;
 
     QString m_sort_property;
-
-    void resolveProperties();
-    void createKeyIndex();
-
-    bool compareProperty(QObject *v1, QObject *v2);
-
-    virtual QVariant formatProperty(const QObject *data, const QMetaProperty *meta) const;
+    SortDirection m_sort_dir;
 
 private:
     QObjectList m_data;
+    QMap<int, int>m_id_index;
     QMap<QString, int>m_index;
-    QHash<int, QByteArray> m_properties;    
+    QHash<int, QByteArray> m_properties;
+
+    // Search
+    QString m_needle;
+    QString m_haystack;
+    QList<int> m_filter_index;
 };
 
 }
