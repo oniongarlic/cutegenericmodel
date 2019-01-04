@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMetaProperty>
+#include <QGeoCoordinate>
 
 #include "abstractobjectmodel.h"
 #include "dummyitem.h"
@@ -18,6 +19,8 @@ public:
     // AbstractObjectModel interface
 protected:
     QVariant formatProperty(const QObject *data, const QMetaProperty *meta) const;
+
+    QGeoCoordinate m_pos;
 };
 
 #endif // DUMMYITEMMODEL_H

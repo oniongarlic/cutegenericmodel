@@ -141,6 +141,9 @@ ApplicationWindow {
                 Text {
                     text: time
                 }
+                Text {
+                    text: geo
+                }
             }
             MouseArea {
                 anchors.fill: parent

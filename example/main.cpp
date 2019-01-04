@@ -8,6 +8,8 @@
 #include <QMetaType>
 #include <QMetaProperty>
 
+#include <QRandomGenerator>
+
 #include "abstractobjectmodel.h"
 #include "dummyitemmodel.h"
 #include "dummyitem.h"
@@ -39,10 +41,14 @@ int main(int argc, char *argv[])
         QDateTime dt=QDateTime::fromMSecsSinceEpoch(random());
         QDate d=dt.date();
 
+        QString key=QString("KEY-%1").arg(id);
+        QString name=QString("%1-%2").arg(id % 2 ? "Tuoli" : "Kaappi").arg(id);
+
         dm->setProperty("id", id);
-        dm->setProperty("name", id % 2 ? "Tuoli-" : "Kaappi-" );
+        dm->setProperty("key", key);
+        dm->setProperty("name", name);
         dm->setProperty("timestamp", dt);
-        dm->setProperty("datestamp", d);        
+        dm->setProperty("datestamp", d);
         dim1.append(dm);
     }
     dim1.blockSignals(false);
@@ -53,9 +59,14 @@ int main(int argc, char *argv[])
         DummyItem *dm=new DummyItem();
         QTime t=QTime::fromMSecsSinceStartOfDay(rand() % (86400*1000));
 
+        QGeoCoordinate pos;
+        pos.setLatitude(QRandomGenerator::global()->generateDouble()*180.0);
+        pos.setLongitude(QRandomGenerator::global()->generateDouble()*90.0);
+
         dm->setProperty("id", id);
         dm->setProperty("name", "Hylly");
         dm->setProperty("time", t);
+        dm->setProperty("geo", QVariant::fromValue(pos));
         data.append(dm);
     }
     dim2.blockSignals(false);

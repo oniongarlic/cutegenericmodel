@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include <QDateTime>
+#include <QGeoCoordinate>
 
 class DummyItem : public QObject
 {
@@ -17,6 +18,7 @@ class DummyItem : public QObject
     Q_PROPERTY(QDateTime timestamp MEMBER m_timestamp NOTIFY timestampChanged)
     Q_PROPERTY(QDate datestamp MEMBER m_datestamp NOTIFY datestampChanged)
     Q_PROPERTY(QTime time MEMBER m_time NOTIFY timeChanged)
+    Q_PROPERTY(QGeoCoordinate geo MEMBER m_geo NOTIFY geoChanged)
 
 public:
     explicit DummyItem(QObject *parent = nullptr);
@@ -39,6 +41,8 @@ private:
     QDate m_datestamp;
     QTime m_time;
 
+    QGeoCoordinate m_geo;
+
     int id() const;
     QString name() const;    
 
@@ -50,6 +54,7 @@ signals:
     void timestampChanged();
     void datestampChanged();
     void timeChanged();
+    void geoChanged();
 
 public slots:
     void setId(int id);

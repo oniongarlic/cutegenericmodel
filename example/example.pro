@@ -1,4 +1,6 @@
 QT += quick
+QT += positioning
+QT += quickcontrols2
 
 CONFIG += c++11
 CONFIG -= app_bundle
