@@ -13,7 +13,7 @@ class DummyItem : public QObject
     Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
     Q_PROPERTY(int itemID READ id NOTIFY idChanged)
     Q_PROPERTY(QString key MEMBER m_key)
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)    
     Q_PROPERTY(QString category READ category NOTIFY categoryChanged)
     Q_PROPERTY(QDateTime timestamp MEMBER m_timestamp NOTIFY timestampChanged)
     Q_PROPERTY(QDate datestamp MEMBER m_datestamp NOTIFY datestampChanged)
@@ -30,6 +30,8 @@ public:
     {
         return m_category;
     }
+
+    Q_INVOKABLE void setCategory(QString category);
 
 private:
     int m_id;

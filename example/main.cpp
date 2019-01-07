@@ -56,17 +56,18 @@ int main(int argc, char *argv[])
     dim2.blockSignals(true);
     // External list of objects    
     for (int id=100;id<ITEMS_MAX;id++) {
-        DummyItem *dm=new DummyItem();
+        DummyItem *dm=new DummyItem(&dim2);
         QTime t=QTime::fromMSecsSinceStartOfDay(rand() % (86400*1000));
-
-        QGeoCoordinate pos;
-        pos.setLatitude(QRandomGenerator::global()->generateDouble()*180.0);
-        pos.setLongitude(QRandomGenerator::global()->generateDouble()*90.0);
 
         dm->setProperty("id", id);
         dm->setProperty("name", "Hylly");
         dm->setProperty("time", t);
+
+        QGeoCoordinate pos;
+        pos.setLatitude(QRandomGenerator::global()->generateDouble()*180.0);
+        pos.setLongitude(QRandomGenerator::global()->generateDouble()*90.0);
         dm->setProperty("geo", QVariant::fromValue(pos));
+
         data.append(dm);
     }
     dim2.blockSignals(false);

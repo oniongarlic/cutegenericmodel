@@ -4,7 +4,7 @@
 
 DummyItem::DummyItem(QObject *parent) :
     QObject(parent),
-    m_category("notSetableFromProperties")
+    m_category("NSFW")
 {
 
 }
@@ -24,6 +24,13 @@ DummyItem *DummyItem::fromVariantMap(const QVariantMap &map)
     dm->m_id=map["id"].toInt();
 
     return dm;
+}
+
+void DummyItem::setCategory(QString category) {
+    // Do some custom extra stuff for example
+    m_category=category.trimmed().toUpper();
+
+    emit categoryChanged(m_category);
 }
 
 int DummyItem::id() const

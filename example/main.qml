@@ -11,24 +11,24 @@ ApplicationWindow {
     title: qsTr("CuteGenericModel example app")
 
     menuBar: MenuBar {
-            Menu {
-                title: "File"
-                Action {
-                    text: qsTr("&Quit")
-                    onTriggered: Qt.quit()
-                }
+        Menu {
+            title: "File"
+            Action {
+                text: qsTr("&Quit")
+                onTriggered: Qt.quit()
             }
-            Menu {
-                title: "Edit"
-                Action {
-                    text: "Clear 1"
-                    onTriggered: diModel.clear();
-                }
-                Action {
-                    text: "Clear 2"
-                    onTriggered: diModelL.clear();
-                }
+        }
+        Menu {
+            title: "Edit"
+            Action {
+                text: "Clear 1"
+                onTriggered: diModel.clear();
             }
+            Action {
+                text: "Clear 2"
+                onTriggered: diModelL.clear();
+            }
+        }
     }
 
     header: ToolBar {
@@ -58,10 +58,11 @@ ApplicationWindow {
                 Layout.minimumWidth: 64
                 Layout.maximumWidth: 128
                 placeholderText: "Search"
+                selectByMouse: true
                 onAccepted: {
                     console.debug("Search: "+text)
                     diModel.search("name", text)
-                    console.debug(diModel.count)                   
+                    console.debug(diModel.count)
                 }
             }
             TextField {
@@ -110,27 +111,54 @@ ApplicationWindow {
             spacing: 8
             Layout.fillWidth: true;
             Layout.fillHeight: true;
+            highlight: highlightBar
+            highlightFollowsCurrentItem: true
         }
 
+    }
+
+    Component {
+        id: highlightBar
+        Rectangle {
+            //height: 50
+            color: "#FFFF88"
+            Behavior on y { SpringAnimation { spring: 2; damping: 0.1 } }
+        }
     }
 
     Component {
         id: dummyItemDelegate
         Rectangle {
             id: wrapper
-            color: "#9acc9a"
+            color: "transparent"
             radius: 4
             width: parent.width
             height: cl.height+4
+            MouseArea {
+                anchors.fill: parent
+                onDoubleClicked: {
+                    console.debug("DoubleClicked!")
+                    nameEditor.editing=!nameEditor.editing
+                }
+            }
             Row {
-                id: cl                
+                id: cl
                 spacing: 8
 
                 Text {
                     text: itemID
                 }
-                Text {
+                EditableText {
+                    id: nameEditor
                     text: name
+                    onAccecpted: {
+                        console.debug(index)
+                        console.debug(text)
+                        name=text;
+                        //var di=wrapper.ListView.view.model.getItem(index)
+                        //di.name=text;
+                        //wrapper.ListView.view.model.refresh(index)
+                    }
                 }
                 Text {
                     text: timestamp
@@ -147,27 +175,29 @@ ApplicationWindow {
             }
             MouseArea {
                 anchors.fill: parent
+                propagateComposedEvents: true
                 onClicked: {
                     console.debug(index)
 
+                    wrapper.ListView.view.currentIndex=index;
+
+                    // get() we are given a QVariantMap
                     var q=wrapper.ListView.view.model.get(index)
-                    console.debug(q["id"])
-                    console.debug(q["name"])
-                    console.debug(q["category"])
-                    console.debug(q["timestamp"])
-                    console.debug(q["datestamp"])
-                    console.debug(q["time"])
+                    console.debug(q["id"] + q["name"])
+                    console.debug(q["category"] + q["timestamp"]+q["datestamp"])
 
-                    // setData()
-                    time="13:00";                    
+                    // Set model property trough role name, setData() in C++ model
+                    time="13:00";
+                    //name="CLICKED!"
 
+                    // Get the QObject derived object, in this example case a DummyItem
                     var di=wrapper.ListView.view.model.getItem(index)
                     console.debug(di.name)
                     console.debug(di.time)
 
                     // Direct modification, call refresh()
-                    di.name="Clicked!"
-                    wrapper.ListView.view.model.refresh(index)
+                    //di.name="Clicked!"
+                    //wrapper.ListView.view.model.refresh(index)
                 }
                 onPressAndHold: {
                     wrapper.ListView.view.model.remove(index)
