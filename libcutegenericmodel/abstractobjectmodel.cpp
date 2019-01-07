@@ -124,14 +124,20 @@ bool AbstractObjectModel::setData(const QModelIndex &index, const QVariant &valu
         return r;
 
     int row=mapIndex(index.row());
+
+    if (row>m_data.size() || row<0)
+        return r;
+
     int rid=role-Qt::UserRole;
 
     QObject *o=m_data.at(row);
+    Q_ASSERT(o);
+
     const QMetaObject *m=QMetaType::metaObjectForType(m_metaid);
 
     QMetaProperty p=m->property(rid);
     if (p.isWritable()) {
-        const QVector<int>roles={ rid };
+        const QVector<int>roles={ role };
         r=p.write(o, value);
         emit dataChanged(index, index, roles);
     }
