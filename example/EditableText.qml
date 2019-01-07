@@ -1,17 +1,18 @@
 import QtQuick 2.9
+import QtQuick.Controls 2.1
 
-Rectangle {
+Item {
     id: w
     property bool editing: false
     width: editing ? t.implicitWidth*2 : t.implicitWidth
-    height: t.implicitHeight
+    height: !editing ? t.implicitHeight : ti.implicitHeight
 
     property string text: ""
 
     signal accecpted();
 
-    border.color: editing ? "black" : "transparent"
-    border.width: editing ? 1 : 0
+    //border.color: editing ? "black" : "transparent"
+    //border.width: editing ? 1 : 0
 
     Text {
         id: t
@@ -19,7 +20,7 @@ Rectangle {
         visible: !w.editing
         text: w.text
     }
-    TextInput {
+    TextField {
         id: ti
         anchors.fill: parent
         visible: w.editing
