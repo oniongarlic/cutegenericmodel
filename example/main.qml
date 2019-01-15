@@ -101,6 +101,24 @@ ApplicationWindow {
             spacing: 8
             Layout.fillWidth: true;
             Layout.fillHeight: true;
+            header: RowLayout {
+                id: headerRow
+                spacing: 1
+                width: parent.width
+                function itemAt(index) { return r1.itemAt(index) }
+                Repeater {
+                    id: r1
+                    model: ["ID", "Name", "TimeStamp", "DateStamp", "Time", "Geo"]
+                    Label {
+                        text: modelData
+                        font.bold: true
+                        font.pixelSize: 14
+                        padding: 2
+                        background: Rectangle { color: "grey" }
+                        Layout.fillWidth: true
+                    }
+                }
+            }
         }
 
         ListView {
@@ -113,6 +131,25 @@ ApplicationWindow {
             Layout.fillHeight: true;
             highlight: highlightBar
             highlightFollowsCurrentItem: true
+            headerPositioning: ListView.OverlayHeader
+            header: RowLayout {
+                spacing: 1
+                z: 2
+                width: parent.width
+                function itemAt(index) { return r2.itemAt(index) }
+                Repeater {
+                    id: r2
+                    model: ["ID", "Item name & title", "TimeStamp", "DateStamp", "Time", "Geo"]
+                    Label {
+                        text: modelData
+                        font.bold: true
+                        font.pixelSize: 14
+                        padding: 2
+                        background: Rectangle { color: "grey" }
+                        Layout.fillWidth: true
+                    }
+                }
+            }
         }
 
     }
@@ -120,9 +157,7 @@ ApplicationWindow {
     Component {
         id: highlightBar
         Rectangle {
-            //height: 50
-            color: "#FFFF88"
-            Behavior on y { SpringAnimation { spring: 2; damping: 0.1 } }
+            color: "green"
         }
     }
 
@@ -143,14 +178,15 @@ ApplicationWindow {
             }
             Row {
                 id: cl
-                spacing: 8
-
+                spacing: 1
                 Text {
                     text: itemID
+                    width: wrapper.ListView.view.headerItem.itemAt(0).width
                 }
                 EditableText {
                     id: nameEditor
                     text: name
+                    width: wrapper.ListView.view.headerItem.itemAt(1).width
                     onAccecpted: {
                         console.debug(index)
                         console.debug(text)
@@ -162,15 +198,23 @@ ApplicationWindow {
                 }
                 Text {
                     text: timestamp
+                    width: wrapper.ListView.view.headerItem.itemAt(2).width
+                    clip: true
+                    elide: Text.ElideMiddle
                 }
                 Text {
                     text: datestamp
+                    width: wrapper.ListView.view.headerItem.itemAt(3).width
+                    clip: true
+                    elide: Text.ElideRight
                 }
                 Text {
                     text: time
+                    width: wrapper.ListView.view.headerItem.itemAt(4).width
                 }
                 Text {
                     text: geo
+                    width: wrapper.ListView.view.headerItem.itemAt(5).width
                 }
             }
             MouseArea {
@@ -187,7 +231,7 @@ ApplicationWindow {
                     console.debug(q["category"] + q["timestamp"]+q["datestamp"])
 
                     // Set model property trough role name, setData() in C++ model
-                    time="13:00";
+                    time=new Date();
                     //name="CLICKED!"
 
                     // Get the QObject derived object, in this example case a DummyItem
