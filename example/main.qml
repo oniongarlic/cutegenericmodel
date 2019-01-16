@@ -90,6 +90,35 @@ ApplicationWindow {
         }
     }
 
+    Component {
+        id: headerComponent
+        RowLayout {
+            id: headerRow
+            spacing: 1
+            z: 2
+            width: parent.width
+            function itemAt(index) { return r2.itemAt(index) }
+            Repeater {
+                id: r2
+                model: ["ID", "Item name & title", "TimeStamp", "DateStamp", "Time", "Geo"]
+                Label {
+                    text: modelData
+                    font.bold: true
+                    font.pixelSize: 14
+                    padding: 2
+                    background: Rectangle { color: "grey" }
+                    Layout.fillWidth: true
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            console.debug(index)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     RowLayout {
         anchors.fill: parent
 
@@ -101,24 +130,7 @@ ApplicationWindow {
             spacing: 8
             Layout.fillWidth: true;
             Layout.fillHeight: true;
-            header: RowLayout {
-                id: headerRow
-                spacing: 1
-                width: parent.width
-                function itemAt(index) { return r1.itemAt(index) }
-                Repeater {
-                    id: r1
-                    model: ["ID", "Name", "TimeStamp", "DateStamp", "Time", "Geo"]
-                    Label {
-                        text: modelData
-                        font.bold: true
-                        font.pixelSize: 14
-                        padding: 2
-                        background: Rectangle { color: "grey" }
-                        Layout.fillWidth: true
-                    }
-                }
-            }
+            header: headerComponent
         }
 
         ListView {
@@ -132,26 +144,8 @@ ApplicationWindow {
             highlight: highlightBar
             highlightFollowsCurrentItem: true
             headerPositioning: ListView.OverlayHeader
-            header: RowLayout {
-                spacing: 1
-                z: 2
-                width: parent.width
-                function itemAt(index) { return r2.itemAt(index) }
-                Repeater {
-                    id: r2
-                    model: ["ID", "Item name & title", "TimeStamp", "DateStamp", "Time", "Geo"]
-                    Label {
-                        text: modelData
-                        font.bold: true
-                        font.pixelSize: 14
-                        padding: 2
-                        background: Rectangle { color: "grey" }
-                        Layout.fillWidth: true
-                    }
-                }
-            }
+            header: headerComponent
         }
-
     }
 
     Component {
