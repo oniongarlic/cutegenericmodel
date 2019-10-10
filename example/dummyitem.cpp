@@ -6,7 +6,9 @@ DummyItem::DummyItem(QObject *parent) :
     QObject(parent),
     m_category("NSFW")
 {
+    startTimer(rand() % 1000 + 1000);
 
+    m_time=QTime::currentTime();
 }
 
 DummyItem::~DummyItem()
@@ -59,4 +61,11 @@ void DummyItem::setName(QString name)
 
     m_name = name;
     emit nameChanged(m_name);
+}
+
+void DummyItem::timerEvent(QTimerEvent *event)
+{
+    m_time=m_time.addSecs(1);
+    // qDebug() << m_time;
+    emit timeChanged();
 }

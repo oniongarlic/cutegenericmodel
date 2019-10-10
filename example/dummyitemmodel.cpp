@@ -21,7 +21,7 @@ QVariant DummyItemModel::formatProperty(const QObject *data, const QMetaProperty
         QTime t;
 
         t=meta->read(data).toTime();
-        return QVariant(t.toString("HH:mm"));
+        return QVariant(t.toString("HH:mm:ss"));
     } else if (strcmp(meta->name(), "timestamp")==0) {
         QDateTime t;
 

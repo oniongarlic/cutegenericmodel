@@ -61,6 +61,10 @@ signals:
 public slots:
     void setId(int id);
     void setName(QString name);
+
+    // QObject interface
+protected:
+    void timerEvent(QTimerEvent *event);
 };
 
 #endif // DUMMYITEM_H
