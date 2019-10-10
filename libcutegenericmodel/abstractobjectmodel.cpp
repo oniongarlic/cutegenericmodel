@@ -7,7 +7,7 @@ using namespace Cute;
 
 AbstractObjectModel::AbstractObjectModel(int meta_id, QObject *parent)
     : QAbstractListModel(parent),
-      m_metaid(meta_id),      
+      m_metaid(meta_id),
       m_has_key(false),
       m_key_name(nullptr),
       m_has_id(false),
@@ -26,7 +26,7 @@ void AbstractObjectModel::resolveProperties()
     for (int i=0;i<m_meta->propertyCount();i++) {
         QMetaProperty p=m_meta->property(i);
 
-        qDebug() << p.name() << p.isReadable() << p.isWritable() << p.typeName() << p.type() << p.isEnumType() << p.isStored();
+        qDebug() << i << p.name() << p.isReadable() << p.isWritable() << p.typeName() << p.type() << p.isEnumType() << p.isStored() << p.hasNotifySignal();
 
         m_properties.insert(Qt::UserRole+i, p.name());
         if (QString(p.name())=="id" && p.type()==QVariant::Int) {
@@ -218,21 +218,50 @@ int AbstractObjectModel::indexKey(const QString key) const
     return m_index.value(key, -1);
 }
 
+void AbstractObjectModel::listenToObjectProperties(QObject *item)
+{
+    const QMetaObject* metaObject = item->metaObject();
+    QStringList properties;
+    for(int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i) {
+        QMetaProperty p=metaObject->property(i);
+
+        if (p.hasNotifySignal()) {
+            const QMetaMethod s = p.notifySignal();
+            connect(item, "2"+s.methodSignature() , this, SLOT(onItemPropertyChanged()));
+        }
+
+        properties << QString::fromLatin1(p.name());
+    }
+}
+
+void AbstractObjectModel::refreshProperty(int index, int property)
+{
+    Q_UNUSED(property)
+    QModelIndex i=createIndex(index, 0);
+
+    if (!i.isValid())
+        return;
+
+    emit dataChanged(i, i);
+}
+
 bool AbstractObjectModel::append(QObject *item)
 {
     if (m_data.contains(item)) {
         qWarning("Duplicates are not supported in model");
         return false;
-    }   
+    }
 
     int p=m_data.size();
-    beginInsertRows(QModelIndex(), p, p);    
+    beginInsertRows(QModelIndex(), p, p);
     m_data.append(item);
     if (m_has_key && m_key_name) {
         QString key=item->property(m_key_name).toString();
         m_index.insert(key, m_data.size());
     }
     endInsertRows();
+
+    listenToObjectProperties(item);
 
     emit countChanged(m_data.size());
 
@@ -248,11 +277,14 @@ bool AbstractObjectModel::prepend(QObject *item)
 
     beginInsertRows(QModelIndex(), 0, 0);
     m_data.prepend(item);
+
     if (m_has_key && m_key_name) {
         QString key=item->property(m_key_name).toString();
         m_index.insert(key, m_data.size());
     }
     endInsertRows();
+
+    listenToObjectProperties(item);
 
     emit countChanged(m_data.size());
 
@@ -280,7 +312,7 @@ bool AbstractObjectModel::remove(int index)
         o->deleteLater();
     else
         emit itemRemoved(o);
-    m_data.removeAt(index);    
+    m_data.removeAt(index);
     endRemoveRows();
 
     createKeyIndex();
@@ -314,13 +346,26 @@ int AbstractObjectModel::count() const
 }
 
 bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
- {
+{
     return v1->property(m_sort_property.toLocal8Bit().constData()) < v2->property(m_sort_property.toLocal8Bit().constData());
 }
 
 QVariant AbstractObjectModel::formatProperty(const QObject *data, const QMetaProperty *meta) const
 {
     return meta->read(data);
+}
+
+void AbstractObjectModel::onItemPropertyChanged()
+{
+    QObject* o=sender();
+
+    int i=m_data.indexOf(o);
+    if (i==-1) {
+        qWarning() << "Unknown item sent a property change signal";
+        return;
+    }
+
+    refreshProperty(i, 0);
 }
 
 void AbstractObjectModel::sortByProperty(const QString property, SortDirection by)
@@ -380,7 +425,7 @@ bool AbstractObjectModel::searchRefresh()
                 m_filter_index.append(i);
             }
             break;
-        // XXX: Handle more types
+            // XXX: Handle more types
         default:;
         }
     }

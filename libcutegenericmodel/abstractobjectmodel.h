@@ -47,7 +47,7 @@ public:
 
     Q_INVOKABLE bool search(const QString property, const QString needle);
 
-    Q_INVOKABLE bool refresh(int index);
+    Q_INVOKABLE bool refresh(int index);        
 
     void setList(QObjectList data);
 
@@ -65,6 +65,9 @@ protected:
     void clearFilter();
     int mapIndex(int index) const;
 
+    void listenToObjectProperties(QObject *item);
+    void refreshProperty(int index, int property);
+
     virtual QVariant formatProperty(const QObject *data, const QMetaProperty *meta) const;
 
     int m_metaid;
@@ -79,6 +82,9 @@ protected:
 
     QString m_sort_property;
     SortDirection m_sort_dir;
+
+protected slots:
+    void onItemPropertyChanged();
 
 private:
     QObjectList m_data;
