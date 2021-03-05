@@ -98,6 +98,19 @@ ApplicationWindow {
                         console.debug("Nothing found with key"+text)
                 }
             }
+            ComboBox {
+                id: comboTest
+                textRole: "name"
+                model: diModelL
+                Layout.fillWidth: true
+                onActivated: {
+                    console.debug("******************************")
+                    var tmp=model.get(currentIndex);
+                    console.debug(tmp.id)
+                    console.debug(tmp.key)
+                    console.debug("******************************")
+                }
+            }
         }
     }
 
