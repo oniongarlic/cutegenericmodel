@@ -257,7 +257,7 @@ bool AbstractObjectModel::append(QObject *item)
     m_data.append(item);
     if (m_has_key && m_key_name) {
         QString key=item->property(m_key_name).toString();
-        m_index.insert(key, m_data.size());
+        m_index.insert(key, m_data.size()-1);
     }
     endInsertRows();
 
