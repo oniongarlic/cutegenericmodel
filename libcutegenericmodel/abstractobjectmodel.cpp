@@ -44,7 +44,7 @@ void AbstractObjectModel::createKeyIndex()
 
     for (int i=0;i<m_data.size();i++) {
         QObject *o=m_data.at(i);
-        QString key=o->property(m_key_name).toString();
+        const QString key=o->property(m_key_name).toString();
 
         m_index.insert(key, i);
     }
@@ -256,7 +256,7 @@ bool AbstractObjectModel::append(QObject *item)
     beginInsertRows(QModelIndex(), p, p);
     m_data.append(item);
     if (m_has_key && m_key_name) {
-        QString key=item->property(m_key_name).toString();
+        const QString key=item->property(m_key_name).toString();
         m_index.insert(key, m_data.size()-1);
     }
     endInsertRows();
@@ -277,11 +277,7 @@ bool AbstractObjectModel::prepend(QObject *item)
 
     beginInsertRows(QModelIndex(), 0, 0);
     m_data.prepend(item);
-
-    if (m_has_key && m_key_name) {
-        QString key=item->property(m_key_name).toString();
-        m_index.insert(key, m_data.size());
-    }
+    createKeyIndex();
     endInsertRows();
 
     listenToObjectProperties(item);
