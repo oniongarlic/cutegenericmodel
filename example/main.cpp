@@ -14,7 +14,7 @@
 #include "dummyitemmodel.h"
 #include "dummyitem.h"
 
-#define ITEMS_MAX (25000)
+#define ITEMS_MAX (1225)
 
 int main(int argc, char *argv[])
 {
@@ -58,9 +58,12 @@ int main(int argc, char *argv[])
     for (int id=100;id<ITEMS_MAX;id++) {
         DummyItem *dm=new DummyItem(&dim2);
         QTime t=QTime::fromMSecsSinceStartOfDay(rand() % (86400*1000));
+        QString key=QString("DKEY:%1").arg(id);
 
         dm->setProperty("id", id);
-        dm->setProperty("name", "Hylly");
+        dm->setProperty("key", key);
+        QString name=QString("Hylly %1").arg(id);
+        dm->setProperty("name", name);
         dm->setProperty("time", t);
 
         QGeoCoordinate pos;

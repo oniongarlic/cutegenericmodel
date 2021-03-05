@@ -78,9 +78,20 @@ ApplicationWindow {
             }
             TextField {
                 Layout.maximumWidth: 64
-                placeholderText: "Key"
+                placeholderText: "Key1"
                 onAccepted: {
                     var o=diModel.getKey(text)
+                    if (o)
+                        console.debug(o["name"])
+                    else
+                        console.debug("Nothing found with key"+text)
+                }
+            }
+            TextField {
+                Layout.maximumWidth: 64
+                placeholderText: "Key2"
+                onAccepted: {
+                    var o=diModelL.getKey(text)
                     if (o)
                         console.debug(o["name"])
                     else
