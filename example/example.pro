@@ -20,7 +20,10 @@ INCLUDEPATH += $$PWD/../libcutegenericmodel
 DEPENDPATH += $$PWD/../libcutegenericmodel
 
 unix:!macx: LIBS += -L$$OUT_PWD/../libcutegenericmodel/ -lcutegenericmodel
-win32: LIBS += -L$$OUT_PWD/libcutegenericmodel/release/ -lcutegenericmodel
+win32: LIBS += -L$$OUT_PWD/../libcutegenericmodel/release/ -lcutegenericmodel
+
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libcutegenericmodel/release/cutegenericmodel.lib
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libcutegenericmodel/debug/cutegenericmodel.lib
 
 SOURCES += \
     main.cpp \    

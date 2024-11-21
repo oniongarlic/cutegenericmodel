@@ -3,9 +3,11 @@
 
 #include <QAbstractListModel>
 
+#include "abstractobjectmodel_global.h"
+
 namespace Cute {
 
-class AbstractObjectModel : public QAbstractListModel
+class ABSTRACTOBJECTMODEL_EXPORT AbstractObjectModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
