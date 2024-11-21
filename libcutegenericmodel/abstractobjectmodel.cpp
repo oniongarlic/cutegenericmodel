@@ -4,16 +4,19 @@
 #include <QMetaProperty>
 #include <QTime>
 #include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 using namespace Cute;
 
 AbstractObjectModel::AbstractObjectModel(const QByteArray name, QObject *parent)
     : QAbstractListModel(parent),
-      m_metaname(name),
-      m_has_key(false),
-      m_key_name(nullptr),
-      m_has_id(false),
-      m_meta(nullptr)
+    m_metaname(name),
+    m_has_key(false),
+    m_key_name(nullptr),
+    m_has_id(false),
+    m_meta(nullptr)
 {    
     resolveProperties();
 }
@@ -34,7 +37,7 @@ void AbstractObjectModel::resolveProperties()
         qDebug() << i << p.name() << p.isReadable() << p.isWritable() << p.typeName() << p.isEnumType() << p.isStored() << p.hasNotifySignal();
 
         m_properties.insert(Qt::UserRole+i, p.name());
-        if (QString(p.name())=="id" && p.type()==QMetaType::Int) {
+        if (QString(p.name())=="id" && p.metaType().id()==QMetaType::Int) {
             m_has_id=true;
         }
     }
@@ -352,9 +355,12 @@ bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
     switch (v1v.typeId()) {
     case QMetaType::Int:
         return v1v.toInt() < v2v.toInt();
-    break;
+        break;
     case QMetaType::UInt:
         return v1v.toUInt() < v2v.toUInt();
+        break;
+    case QMetaType::Double:
+        return v1v.toDouble() < v2v.toDouble();
         break;
     case QMetaType::Float:
         return v1v.toFloat() < v2v.toFloat();
@@ -368,9 +374,9 @@ bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
     case QMetaType::QDateTime:
         return v1v.toDateTime() < v2v.toDateTime();
         break;
-    default:
+    default:        
         return v1v.toByteArray() < v2v.toByteArray();
-}
+    }
 }
 
 QVariant AbstractObjectModel::formatProperty(const QObject *data, const QMetaProperty *meta) const
@@ -479,6 +485,52 @@ bool AbstractObjectModel::refresh(int index)
     emit dataChanged(i, i);
 
     return true;
+}
+
+QString AbstractObjectModel::toJson()
+{
+    QJsonArray a;
+
+    for (int i=0;i<m_data.size();i++) {
+        QJsonObject jo;
+        QObject *item=m_data.at(i);
+
+        for (auto i = m_properties.cbegin(), end = m_properties.cend(); i != end; ++i) {
+            QString key=i.value();
+            QVariant hs=item->property(i.value());
+            if (!hs.isValid() || hs.isNull())
+                continue;
+
+            switch ((QMetaType::Type)hs.typeId()) {
+            case QMetaType::QString:
+                jo.insert(key, hs.toString());
+                break;
+            case QMetaType::Bool:
+                jo.insert(key, hs.toBool());
+                break;
+            case QMetaType::Int:
+                jo.insert(key, hs.toInt());
+                break;
+            case QMetaType::Double:
+                jo.insert(key, hs.toDouble());
+                break;
+            case QMetaType::Float:
+                jo.insert(key, hs.toFloat());
+                break;
+            case QMetaType::QDateTime:
+            case QMetaType::QTime:
+                jo.insert(key, hs.toString());
+                break;
+            default:;
+            }
+        }
+
+        a.append(jo);
+    }
+
+    QJsonDocument d(a);
+
+    return d.toJson();
 }
 
 void AbstractObjectModel::setList(QObjectList data)

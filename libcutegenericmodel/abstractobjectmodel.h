@@ -49,7 +49,9 @@ public:
 
     Q_INVOKABLE bool search(const QString property, const QString needle);
 
-    Q_INVOKABLE bool refresh(int index);        
+    Q_INVOKABLE bool refresh(int index);
+
+    Q_INVOKABLE virtual QString toJson();
 
     void setList(QObjectList data);
 
