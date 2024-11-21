@@ -1,7 +1,7 @@
 #include "dummyitemmodel.h"
 
 DummyItemModel::DummyItemModel(QObject *parent) :
-    AbstractObjectModel(QMetaType::type("DummyItem"), parent)
+    AbstractObjectModel("DummyItem", parent)
 {
     m_has_key=true;
     m_key_name="key";

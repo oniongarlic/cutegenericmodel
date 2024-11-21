@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.5
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
 import org.tal.model 1.0
 
@@ -185,7 +185,7 @@ ApplicationWindow {
             id: wrapper
             color: "transparent"
             radius: 4
-            width: parent.width
+            width: ListView.view.width
             height: cl.height+4
             MouseArea {
                 anchors.fill: parent

@@ -14,7 +14,7 @@ class ABSTRACTOBJECTMODEL_EXPORT AbstractObjectModel : public QAbstractListModel
     Q_PROPERTY(bool isWritable MEMBER m_iswritable NOTIFY isWritableChanged)
 
 public:
-    explicit AbstractObjectModel(int meta_id, QObject *parent = nullptr);
+    explicit AbstractObjectModel(const QByteArray name, QObject *parent = nullptr);
 
     // QAbstractListModel
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -72,7 +72,7 @@ protected:
 
     virtual QVariant formatProperty(const QObject *data, const QMetaProperty *meta) const;
 
-    int m_metaid;
+    QByteArray m_metaname;
     bool m_has_key;
     int m_key_property_id;
     const char *m_key_name;

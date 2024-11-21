@@ -2,12 +2,14 @@
 
 #include <QDebug>
 #include <QMetaProperty>
+#include <QTime>
+#include <QDateTime>
 
 using namespace Cute;
 
-AbstractObjectModel::AbstractObjectModel(int meta_id, QObject *parent)
+AbstractObjectModel::AbstractObjectModel(const QByteArray name, QObject *parent)
     : QAbstractListModel(parent),
-      m_metaid(meta_id),
+      m_metaname(name),
       m_has_key(false),
       m_key_name(nullptr),
       m_has_id(false),
@@ -18,15 +20,18 @@ AbstractObjectModel::AbstractObjectModel(int meta_id, QObject *parent)
 
 void AbstractObjectModel::resolveProperties()
 {
-    Q_ASSERT(m_metaid>0);
-
-    m_meta=QMetaType::metaObjectForType(m_metaid);
+    auto type=QMetaType::fromName(m_metaname);
+    if (!type.isValid()) {
+        qFatal() << "Type" << m_metaname << "is not valid!";
+        return;
+    }
+    m_meta=type.metaObject();
     Q_ASSERT(m_meta);
 
     for (int i=0;i<m_meta->propertyCount();i++) {
         QMetaProperty p=m_meta->property(i);
 
-        qDebug() << i << p.name() << p.isReadable() << p.isWritable() << p.typeName() << p.type() << p.isEnumType() << p.isStored() << p.hasNotifySignal();
+        qDebug() << i << p.name() << p.isReadable() << p.isWritable() << p.typeName() << p.isEnumType() << p.isStored() << p.hasNotifySignal();
 
         m_properties.insert(Qt::UserRole+i, p.name());
         if (QString(p.name())=="id" && p.type()==QMetaType::Int) {
@@ -59,7 +64,6 @@ int AbstractObjectModel::rowCount(const QModelIndex &parent) const
 
 QVariant AbstractObjectModel::data(const QModelIndex &index, int role) const
 {
-    Q_ASSERT(m_metaid>0);
     Q_ASSERT(m_meta);
 
     if (!index.isValid())
@@ -133,9 +137,7 @@ bool AbstractObjectModel::setData(const QModelIndex &index, const QVariant &valu
     QObject *o=m_data.at(row);
     Q_ASSERT(o);
 
-    const QMetaObject *m=QMetaType::metaObjectForType(m_metaid);
-
-    QMetaProperty p=m->property(rid);
+    QMetaProperty p=m_meta->property(rid);
     if (p.isWritable()) {
         const QVector<int>roles={ role };
         r=p.write(o, value);
@@ -172,10 +174,8 @@ QVariantMap AbstractObjectModel::get(int index) const
 
     const QObject *o=m_data.at(mapIndex(index));
 
-    const QMetaObject *m=QMetaType::metaObjectForType(m_metaid);
-
-    for (int i=0;i<m->propertyCount();i++) {
-        QMetaProperty p=m->property(i);
+    for (int i=0;i<m_meta->propertyCount();i++) {
+        QMetaProperty p=m_meta->property(i);
         if (!p.isReadable())
             continue;
 
@@ -321,7 +321,7 @@ bool AbstractObjectModel::remove(int index)
 void AbstractObjectModel::clear()
 {
     beginResetModel();
-    clearFilter();
+    
     for (int i=0;i<m_data.size();i++) {
         QObject *o=m_data.at(i);
         if (o->parent()==this)
@@ -331,6 +331,9 @@ void AbstractObjectModel::clear()
     }
     m_data.clear();
     m_index.clear();
+    m_filter_index.clear();
+    m_needle.clear();
+    
     endResetModel();
 
     emit countChanged(m_data.size());
@@ -346,7 +349,28 @@ bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
     auto v1v=v1->property(m_sort_property.toLocal8Bit().constData());
     auto v2v=v2->property(m_sort_property.toLocal8Bit().constData());
     
-    return v1v.toByteArray() < v2v.toByteArray();
+    switch (v1v.typeId()) {
+    case QMetaType::Int:
+        return v1v.toInt() < v2v.toInt();
+    break;
+    case QMetaType::UInt:
+        return v1v.toUInt() < v2v.toUInt();
+        break;
+    case QMetaType::Float:
+        return v1v.toFloat() < v2v.toFloat();
+        break;
+    case QMetaType::QString:
+        return v1v.toString() < v2v.toString();
+        break;
+    case QMetaType::QTime:
+        return v1v.toTime() < v2v.toTime();
+        break;
+    case QMetaType::QDateTime:
+        return v1v.toDateTime() < v2v.toDateTime();
+        break;
+    default:
+        return v1v.toByteArray() < v2v.toByteArray();
+}
 }
 
 QVariant AbstractObjectModel::formatProperty(const QObject *data, const QMetaProperty *meta) const
@@ -416,7 +440,7 @@ bool AbstractObjectModel::searchRefresh()
 
         QString str;
 
-        switch ((QMetaType::Type)hs.type()) {
+        switch ((QMetaType::Type)hs.typeId()) {
         case QMetaType::QString:
             str=hs.toString();
             if (str.contains(m_needle, Qt::CaseInsensitive)) {
