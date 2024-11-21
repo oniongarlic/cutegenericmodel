@@ -29,7 +29,7 @@ void AbstractObjectModel::resolveProperties()
         qDebug() << i << p.name() << p.isReadable() << p.isWritable() << p.typeName() << p.type() << p.isEnumType() << p.isStored() << p.hasNotifySignal();
 
         m_properties.insert(Qt::UserRole+i, p.name());
-        if (QString(p.name())=="id" && p.type()==QVariant::Int) {
+        if (QString(p.name())=="id" && p.type()==QMetaType::Int) {
             m_has_id=true;
         }
     }
@@ -343,7 +343,10 @@ int AbstractObjectModel::count() const
 
 bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
 {
-    return v1->property(m_sort_property.toLocal8Bit().constData()) < v2->property(m_sort_property.toLocal8Bit().constData());
+    auto v1v=v1->property(m_sort_property.toLocal8Bit().constData());
+    auto v2v=v2->property(m_sort_property.toLocal8Bit().constData());
+    
+    return v1v.toByteArray() < v2v.toByteArray();
 }
 
 QVariant AbstractObjectModel::formatProperty(const QObject *data, const QMetaProperty *meta) const

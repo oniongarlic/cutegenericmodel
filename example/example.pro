@@ -20,7 +20,7 @@ INCLUDEPATH += $$PWD/../libcutegenericmodel
 DEPENDPATH += $$PWD/../libcutegenericmodel
 
 unix:!macx: LIBS += -L$$OUT_PWD/../libcutegenericmodel/ -lcutegenericmodel
-win32: LIBS += -L$$OUT_PWD/../libcutegenericmodel/release/ -lcutegenericmodel
+win32: LIBS += -L$$OUT_PWD/libcutegenericmodel/release/ -lcutegenericmodel
 
 SOURCES += \
     main.cpp \    

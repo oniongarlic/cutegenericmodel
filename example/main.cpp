@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     for (int id=1;id<ITEMS_MAX;id++) {
         DummyItem *dm=new DummyItem(&dim1);
 
-        QDateTime dt=QDateTime::fromMSecsSinceEpoch(random());
+        QDateTime dt=QDateTime::fromMSecsSinceEpoch(QRandomGenerator::global()->generate());
         QDate d=dt.date();
 
         QString key=QString("KEY-%1").arg(id);
