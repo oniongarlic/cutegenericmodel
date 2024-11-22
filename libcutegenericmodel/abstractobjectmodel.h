@@ -52,6 +52,7 @@ public:
     Q_INVOKABLE bool refresh(int index);
 
     Q_INVOKABLE virtual QString toJson();
+    Q_INVOKABLE virtual bool fromJson(const QByteArray json);
 
     void setList(QObjectList data);
 

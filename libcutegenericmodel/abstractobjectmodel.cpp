@@ -533,6 +533,21 @@ QString AbstractObjectModel::toJson()
     return d.toJson();
 }
 
+bool AbstractObjectModel::fromJson(const QByteArray json)
+{
+    QJsonDocument d=QJsonDocument::fromJson(json);
+    if (d.isEmpty())
+        return false;
+    if (!d.isArray())
+        return false;
+
+    const QJsonArray a=d.array();
+
+
+
+    return true;
+}
+
 void AbstractObjectModel::setList(QObjectList data)
 {
     if (!m_data.empty())
