@@ -47,7 +47,8 @@ public:
 
     Q_INVOKABLE void sortByProperty(const QString property, SortDirection by=SortAsc);
 
-    Q_INVOKABLE bool search(const QString property, const QString needle);
+    Q_INVOKABLE bool search(const QString property, const QVariant needle);
+    Q_INVOKABLE void clearSearch();
 
     Q_INVOKABLE bool refresh(int index);
 
@@ -97,7 +98,7 @@ private:
     QHash<int, QByteArray> m_properties;
 
     // Search
-    QString m_needle;
+    QVariant m_needle;
     QString m_haystack;
     QList<int> m_filter_index;
 };
