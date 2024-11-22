@@ -1,5 +1,11 @@
-WiP Qt generic QObject list model
+Qt generic QObject list model
 
-Inspired by DataModel & GroupDataModel in BlackBerry 10 Cascdes
-* http://developer.blackberry.com/native/reference/cascades/bb__cascades__datamodel.html
-* http://developer.blackberry.com/native/reference/cascades/bb__cascades__groupdatamodel.html
+Inspired by DataModel & GroupDataModel that was in BlackBerry 10 Cascades
+
+* Model for storing custom C++ QObject based items
+* Easy integration with QtQuick
+* QObject properties are handled automatically to roles for easy use in QtQuick ListViews and friends
+* Easy sorting by any property
+* Unique key handling
+* Filtering/Searching on string properties
+* Easy to handle custom formating for any given role
