@@ -67,7 +67,10 @@ ApplicationWindow {
                 selectByMouse: true
                 onAccepted: {
                     console.debug("Search: "+text)
-                    diModel.search("name", text)
+                    if (text!='')
+                        diModel.search("name", text)
+                    else
+                        diModel.clearSearch();
                     console.debug(diModel.count)
                 }
             }

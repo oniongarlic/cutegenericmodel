@@ -62,7 +62,7 @@ int AbstractObjectModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
 
-    return m_needle.isEmpty() ? m_data.size() : m_filter_index.size();
+    return m_needle.isNull() ? m_data.size() : m_filter_index.size();
 }
 
 QVariant AbstractObjectModel::data(const QModelIndex &index, int role) const
@@ -344,7 +344,7 @@ void AbstractObjectModel::clear()
 
 int AbstractObjectModel::count() const
 {
-    return m_needle.isEmpty() ? m_data.size() : m_filter_index.size();
+    return m_needle.isNull() ? m_data.size() : m_filter_index.size();
 }
 
 bool AbstractObjectModel::compareProperty(QObject *v1, QObject *v2)
@@ -416,17 +416,26 @@ void AbstractObjectModel::sortRefresh()
     endResetModel();
 }
 
-bool AbstractObjectModel::search(const QString property, const QString needle)
+bool AbstractObjectModel::search(const QString property, const QVariant needle)
 {
-    m_needle=needle.simplified();
+    m_needle=needle;
     m_haystack=property;
 
     return searchRefresh();
 }
 
+void AbstractObjectModel::clearSearch()
+{
+    clearFilter();
+}
+
 bool AbstractObjectModel::searchRefresh()
 {
-    if (m_needle.isEmpty()) {
+    if (m_needle.isNull()) {
+        clearFilter();
+        return false;
+    }
+    if (!m_needle.isValid()) {
         clearFilter();
         return false;
     }
@@ -444,17 +453,28 @@ bool AbstractObjectModel::searchRefresh()
         if (!hs.isValid() || hs.isNull())
             continue;
 
-        QString str;
-
+        // XXX: Handle more types and comparision modes?
         switch ((QMetaType::Type)hs.typeId()) {
         case QMetaType::QString:
-            str=hs.toString();
-            if (str.contains(m_needle, Qt::CaseInsensitive)) {
-                //qDebug() << "Found match at " << i << " in " << str;
+            if (hs.toString().contains(m_needle.toString().simplified(), Qt::CaseInsensitive)) {
                 m_filter_index.append(i);
             }
             break;
-            // XXX: Handle more types
+        case QMetaType::Int:
+            if (hs.toInt()==m_needle.toInt()) {
+                m_filter_index.append(i);
+            }
+            break;
+        case QMetaType::Float:
+            if (hs.toFloat()==m_needle.toFloat()) { // xxx
+                m_filter_index.append(i);
+            }
+            break;
+        case QMetaType::Bool:
+            if (hs.toBool()==m_needle.toBool()) {
+                m_filter_index.append(i);
+            }
+            break;
         default:;
         }
     }
@@ -470,6 +490,7 @@ void AbstractObjectModel::clearFilter()
     beginResetModel();
     m_filter_index.clear();
     m_needle.clear();
+    m_haystack.clear();
     endResetModel();
     emit countChanged(m_data.size());
     return;
