@@ -13,7 +13,7 @@ DummyItem::DummyItem(QObject *parent) :
 
 DummyItem::~DummyItem()
 {
-
+    qDebug() << "Deleted" << m_key;
 }
 
 DummyItem *DummyItem::fromVariantMap(const QVariantMap &map)

@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     for (int id=1;id<ITEMS_MAX;id++) {
         DummyItem *dm=new DummyItem(&dim1);
 
-        QDateTime dt=QDateTime::fromMSecsSinceEpoch(QRandomGenerator::global()->generate());
+        QDateTime dt=QDateTime::fromSecsSinceEpoch(QRandomGenerator::global()->generate());
         QDate d=dt.date();
 
         QString key=QString("KEY-%1").arg(id);
@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
         QString name=QString("Hylly %1").arg(id);
         dm->setProperty("name", name);
         dm->setProperty("time", t);
+        dm->setProperty("datestamp", QDateTime::fromSecsSinceEpoch(QRandomGenerator::global()->generate()));
 
         QGeoCoordinate pos;
         pos.setLatitude(QRandomGenerator::global()->generateDouble()*180.0);

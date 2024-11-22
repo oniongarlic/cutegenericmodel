@@ -18,6 +18,7 @@ class DummyItem : public QObject
     Q_PROPERTY(QDateTime timestamp MEMBER m_timestamp NOTIFY timestampChanged)
     Q_PROPERTY(QDate datestamp MEMBER m_datestamp NOTIFY datestampChanged)
     Q_PROPERTY(QTime time MEMBER m_time NOTIFY timeChanged)
+    Q_PROPERTY(bool enabled MEMBER m_enabled NOTIFY enabledChanged)
     Q_PROPERTY(QGeoCoordinate geo MEMBER m_geo NOTIFY geoChanged)
 
 public:
@@ -42,6 +43,7 @@ private:
     QDateTime m_timestamp;
     QDate m_datestamp;
     QTime m_time;
+    bool m_enabled;
 
     QGeoCoordinate m_geo;
 
@@ -56,6 +58,7 @@ signals:
     void timestampChanged();
     void datestampChanged();
     void timeChanged();
+    void enabledChanged();
     void geoChanged();
 
 public slots:

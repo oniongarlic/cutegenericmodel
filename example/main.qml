@@ -14,6 +14,12 @@ ApplicationWindow {
         Menu {
             title: "File"
             Action {
+                text: qsTr("&Json")
+                onTriggered: {
+                    console.debug(diModel.toJson());
+                }
+            }
+            Action {
                 text: qsTr("&Quit")
                 onTriggered: Qt.quit()
             }
@@ -35,11 +41,11 @@ ApplicationWindow {
         RowLayout {
 
             ToolButton {
-                text: "Asc"
+                text: "ID Asc"
                 onClicked: diModel.sortByProperty('id', DummyItemModel.SortAsc);
             }
             ToolButton {
-                text: "Desc"
+                text: "ID Desc"
                 onClicked: diModel.sortByProperty('id', DummyItemModel.SortDesc);
             }
             ToolButton {
@@ -101,13 +107,14 @@ ApplicationWindow {
             ComboBox {
                 id: comboTest
                 textRole: "name"
+                valueRole: "key"
                 model: diModelL
                 Layout.fillWidth: true
                 onActivated: {
                     console.debug("******************************")
                     var tmp=model.get(currentIndex);
-                    console.debug(tmp.id)
-                    console.debug(tmp.key)
+                    console.debug("Obj", currentIndex, tmp.id, tmp.key)
+                    console.debug("Value", currentValue)
                     console.debug("******************************")
                 }
             }
@@ -129,7 +136,7 @@ ApplicationWindow {
                     text: modelData
                     font.bold: true
                     font.pixelSize: 14
-                    padding: 2
+                    padding: 4
                     background: Rectangle { color: "grey" }
                     Layout.fillWidth: true
                     MouseArea {
@@ -145,6 +152,7 @@ ApplicationWindow {
 
     RowLayout {
         anchors.fill: parent
+        anchors.margins: 8
 
         ListView {
             id: lv1
@@ -152,9 +160,17 @@ ApplicationWindow {
             delegate: dummyItemDelegate
             clip: true
             spacing: 8
+            highlight: highlightBar
+            highlightFollowsCurrentItem: true
             Layout.fillWidth: true;
             Layout.fillHeight: true;
             header: headerComponent
+
+            ScrollBar.vertical: ScrollBar { }
+
+            remove: Transition {
+                NumberAnimation { property: "opacity"; to: 0; duration: 200 }
+            }
         }
 
         ListView {
@@ -169,6 +185,8 @@ ApplicationWindow {
             highlightFollowsCurrentItem: true
             headerPositioning: ListView.OverlayHeader
             header: headerComponent
+
+            ScrollBar.vertical: ScrollBar { }
         }
     }
 
@@ -186,7 +204,7 @@ ApplicationWindow {
             color: "transparent"
             radius: 4
             width: ListView.view.width
-            height: cl.height+4
+            height: cl.height+8
             MouseArea {
                 anchors.fill: parent
                 onDoubleClicked: {
@@ -196,7 +214,7 @@ ApplicationWindow {
             }
             Row {
                 id: cl
-                spacing: 1
+                spacing: 4
                 Text {
                     text: itemID
                     width: wrapper.ListView.view.headerItem.itemAt(0).width
