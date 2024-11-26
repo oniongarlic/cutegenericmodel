@@ -19,6 +19,7 @@ public:
     // AbstractObjectModel interface
 protected:
     QVariant formatProperty(const QObject *data, const QMetaProperty *meta) const;
+    QObject *fromVariantMap(const QVariantMap &map);
 
     QGeoCoordinate m_pos;
 };

@@ -20,6 +20,24 @@ ApplicationWindow {
                 }
             }
             Action {
+                text: "From JSON"
+                onTriggered: {
+                    diModel.fromJson('
+                                [
+                                    {
+                                        "category": "JSON",
+                                        "enabled": false,
+                                        "key": "json-test",
+                                        "name": "JSON Import",
+                                        "time": "12:34:56",
+                                        "timestamp": "2024-11-11T22:50:10"
+                                    }
+                                ]'
+                                );
+                }
+            }
+
+            Action {
                 text: qsTr("&Quit")
                 onTriggered: Qt.quit()
             }

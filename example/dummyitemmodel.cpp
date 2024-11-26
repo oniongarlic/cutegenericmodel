@@ -39,3 +39,8 @@ QVariant DummyItemModel::formatProperty(const QObject *data, const QMetaProperty
     return AbstractObjectModel::formatProperty(data, meta);
 }
 
+QObject *DummyItemModel::fromVariantMap(const QVariantMap &map)
+{
+    return DummyItem::fromVariantMap(map);
+}
+

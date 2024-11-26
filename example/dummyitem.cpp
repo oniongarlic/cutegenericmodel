@@ -20,10 +20,14 @@ DummyItem *DummyItem::fromVariantMap(const QVariantMap &map)
 {
     DummyItem *dm=new DummyItem();
 
-    dm->m_category=map["category"].toString();
-    dm->m_name=map["name"].toString();
-    dm->m_key=map["key"].toString();
     dm->m_id=map["id"].toInt();
+    dm->m_key=map["key"].toString();
+
+    dm->m_category=map["category"].toString().toUpper();
+    dm->m_name=map["name"].toString();
+    dm->m_time=map["time"].toTime();
+    dm->m_datestamp=map["date"].toDate();
+    dm->m_timestamp=map["datetime"].toDateTime();
 
     return dm;
 }

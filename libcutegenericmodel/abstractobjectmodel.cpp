@@ -384,6 +384,11 @@ QVariant AbstractObjectModel::formatProperty(const QObject *data, const QMetaPro
     return meta->read(data);
 }
 
+QObject *AbstractObjectModel::fromVariantMap(const QVariantMap &map)
+{
+    return nullptr;
+}
+
 void AbstractObjectModel::onItemPropertyChanged()
 {
     QObject* o=sender();
@@ -557,14 +562,29 @@ QString AbstractObjectModel::toJson()
 bool AbstractObjectModel::fromJson(const QByteArray json)
 {
     QJsonDocument d=QJsonDocument::fromJson(json);
-    if (d.isEmpty())
+    if (d.isEmpty()) {
+        qWarning() << "fromJson: Empty document" << json;
         return false;
-    if (!d.isArray())
+    }
+    if (!d.isArray()) {
+        qWarning() << "fromJson: Not an array"  << json;
         return false;
+    }
 
     const QJsonArray a=d.array();
 
+    qDebug() << "fromJson: " << a;
 
+    for (qsizetype i=0;i<a.count();i++) {
+        auto item=a.at(i).toObject();
+        if (item.isEmpty())
+            continue;
+        auto vm=item.toVariantMap();
+        auto o=fromVariantMap(vm);
+        if (o!=nullptr) {
+            append(o);
+        }
+    }
 
     return true;
 }
