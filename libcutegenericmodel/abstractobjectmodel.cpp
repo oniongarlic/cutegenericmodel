@@ -582,6 +582,7 @@ bool AbstractObjectModel::fromJson(const QByteArray json)
         auto vm=item.toVariantMap();
         auto o=fromVariantMap(vm);
         if (o!=nullptr) {
+            o->setParent(this);
             append(o);
         }
     }
