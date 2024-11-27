@@ -5,6 +5,7 @@ import QtQuick.Controls
 import org.tal.model 1.0
 
 ApplicationWindow {
+    id: root
     visible: true
     width: 800
     height: 480
@@ -38,6 +39,18 @@ ApplicationWindow {
             }
 
             Action {
+                text: "From component"
+                onTriggered: {
+                    var tmp=dic.createObject(diModel);
+                    diModel.append(tmp)
+                }
+            }
+
+            MenuSeparator {
+
+            }
+
+            Action {
                 text: qsTr("&Quit")
                 onTriggered: Qt.quit()
             }
@@ -52,6 +65,16 @@ ApplicationWindow {
                 text: "Clear 2"
                 onTriggered: diModelL.clear();
             }
+        }
+    }
+
+    Component {
+        id: dic
+        DummyItem {
+            name: "bloop"
+            time: new Date()
+            timestamp: new Date()
+            enabled: false
         }
     }
 
