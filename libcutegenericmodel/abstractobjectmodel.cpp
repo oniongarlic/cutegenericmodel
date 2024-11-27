@@ -386,6 +386,7 @@ QVariant AbstractObjectModel::formatProperty(const QObject *data, const QMetaPro
 
 QObject *AbstractObjectModel::fromVariantMap(const QVariantMap &map)
 {
+    Q_UNUSED(map);
     return nullptr;
 }
 
