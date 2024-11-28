@@ -5,6 +5,9 @@
 #include <QMap>
 #include <QDateTime>
 #include <QGeoCoordinate>
+#include <QVector2D>
+#include <QVector3D>
+#include <QVector4D>
 
 class DummyItem : public QObject
 {
@@ -20,6 +23,9 @@ class DummyItem : public QObject
     Q_PROPERTY(QTime time MEMBER m_time NOTIFY timeChanged)
     Q_PROPERTY(bool enabled MEMBER m_enabled NOTIFY enabledChanged)
     Q_PROPERTY(QGeoCoordinate geo MEMBER m_geo NOTIFY geoChanged)
+    Q_PROPERTY(QVector2D vec2 MEMBER m_vec2 NOTIFY vec2Changed)
+    Q_PROPERTY(QVector3D vec3 MEMBER m_vec3 NOTIFY vec3Changed)
+    Q_PROPERTY(QVector4D vec4 MEMBER m_vec4 NOTIFY vec4Changed)
 
 public:
     explicit DummyItem(QObject *parent = nullptr);
@@ -48,8 +54,12 @@ private:
     QGeoCoordinate m_geo;
 
     int id() const;
-    QString name() const;    
-
+    QString name() const;
+    
+    QVector2D m_vec2;
+    QVector3D m_vec3;
+    QVector4D m_vec4;
+    
 signals:
 
     void idChanged(int id);
@@ -60,7 +70,11 @@ signals:
     void timeChanged();
     void enabledChanged();
     void geoChanged();
-
+    
+    void vec2Changed();
+    void vec3Changed();
+    void vec4Changed();
+    
 public slots:
     void setId(int id);
     void setName(QString name);

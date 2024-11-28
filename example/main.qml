@@ -31,7 +31,8 @@ ApplicationWindow {
                                         "key": "json-test",
                                         "name": "JSON Import",
                                         "time": "12:34:56",
-                                        "timestamp": "2024-11-11T22:50:10"
+                                        "timestamp": "2024-11-11T22:50:10",
+                                        "vec2": { "x": 3.14, "y": 14.3 } 
                                     }
                                 ]'
                                 );
@@ -75,6 +76,9 @@ ApplicationWindow {
             time: new Date()
             timestamp: new Date()
             enabled: false
+            vec2: Qt.vector2d(5,6)
+            vec3: Qt.vector3d(50,60,70)
+            vec4: Qt.vector4d(1,2,3,4)
         }
     }
 
