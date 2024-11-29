@@ -76,6 +76,8 @@ protected:
 
     virtual QVariant formatProperty(const QObject *data, const QMetaProperty *meta) const;
     virtual QObject *fromVariantMap(const QVariantMap &map);
+    
+    virtual bool formatToJson(const QString &key, const QVariant &value, QJsonValue &jvalue) const;
 
     QByteArray m_metaname;
     bool m_has_key;

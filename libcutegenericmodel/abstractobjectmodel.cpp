@@ -393,6 +393,15 @@ QObject *AbstractObjectModel::fromVariantMap(const QVariantMap &map)
     return nullptr;
 }
 
+bool AbstractObjectModel::formatToJson(const QString &key, const QVariant &value, QJsonValue &jvalue) const
+{
+    Q_UNUSED(key)
+    Q_UNUSED(value)
+    Q_UNUSED(jvalue)
+    
+    return false;
+}
+
 void AbstractObjectModel::onItemPropertyChanged()
 {
     QObject* o=sender();
@@ -532,7 +541,13 @@ QString AbstractObjectModel::toJson()
             if (!hs.isValid() || hs.isNull())
                 continue;
             
-            switch ((QMetaType::Type)hs.typeId()) {
+            int t=hs.typeId();
+            
+            if (t>QMetaType::User) {
+                
+            }
+            
+            switch ((QMetaType::Type)t) {
             case QMetaType::QString:
                 jo.insert(key, hs.toString());
                 break;
@@ -587,8 +602,16 @@ QString AbstractObjectModel::toJson()
             case QMetaType::QStringList:
                 jo.insert(key, QJsonArray::fromStringList(hs.toStringList()));
                 break;
-            default:;
-                qWarning() << "No json type handler for key " << key << " type id " << (QMetaType::Type)hs.typeId();
+            default: {
+                QVariant cj;
+                QJsonValue jv;
+                if (formatToJson(key, hs, jv)==false) {
+                    qWarning() << "No json type handler for key " << key << " type id " << (QMetaType::Type)hs.typeId();
+                } else {
+                    jo.insert(key, jv);
+                }
+            }
+                break;
             }
         }
         

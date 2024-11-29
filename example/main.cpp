@@ -49,6 +49,13 @@ int main(int argc, char *argv[])
         dm->setProperty("name", name);
         dm->setProperty("timestamp", dt);
         dm->setProperty("datestamp", d);
+        
+        QGeoCoordinate pos;
+        pos.setLatitude(QRandomGenerator::global()->generateDouble()*90.0);
+        pos.setLongitude(QRandomGenerator::global()->generateDouble()*180.0);
+        pos.setAltitude(500);
+        dm->setProperty("geo", QVariant::fromValue(pos));
+        
         dim1.append(dm);
     }
     dim1.blockSignals(false);
@@ -68,8 +75,8 @@ int main(int argc, char *argv[])
         dm->setProperty("datestamp", QDateTime::fromSecsSinceEpoch(QRandomGenerator::global()->generate()));
 
         QGeoCoordinate pos;
-        pos.setLatitude(QRandomGenerator::global()->generateDouble()*180.0);
-        pos.setLongitude(QRandomGenerator::global()->generateDouble()*90.0);
+        pos.setLatitude(QRandomGenerator::global()->generateDouble()*90.0);
+        pos.setLongitude(QRandomGenerator::global()->generateDouble()*180.0);
         dm->setProperty("geo", QVariant::fromValue(pos));
 
         data.append(dm);

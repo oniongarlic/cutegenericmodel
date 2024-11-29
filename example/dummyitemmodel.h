@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMetaProperty>
+#include <QJsonValue>
 #include <QGeoCoordinate>
 
 #include "abstractobjectmodel.h"
@@ -20,7 +21,8 @@ public:
 protected:
     QVariant formatProperty(const QObject *data, const QMetaProperty *meta) const;
     QObject *fromVariantMap(const QVariantMap &map);
-
+    bool formatToJson(const QString &key, const QVariant &value, QJsonValue &jvalue) const;
+    
     QGeoCoordinate m_pos;
 };
 

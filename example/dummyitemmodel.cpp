@@ -1,5 +1,7 @@
 #include "dummyitemmodel.h"
 
+#include <QJsonObject>
+
 DummyItemModel::DummyItemModel(QObject *parent) :
     AbstractObjectModel("DummyItem", parent)
 {
@@ -42,5 +44,24 @@ QVariant DummyItemModel::formatProperty(const QObject *data, const QMetaProperty
 QObject *DummyItemModel::fromVariantMap(const QVariantMap &map)
 {
     return DummyItem::fromVariantMap(map);
+}
+
+bool DummyItemModel::formatToJson(const QString &key, const QVariant &value, QJsonValue &jvalue) const
+{
+    if (key=="geo") {
+        QVariantMap g;
+        QGeoCoordinate gc=value.value<QGeoCoordinate>();
+        
+        if (!gc.isValid())
+            return true;
+        
+        g.insert("lat", gc.latitude());
+        g.insert("lon", gc.longitude());
+        
+        jvalue=QJsonObject::fromVariantMap(g);
+        
+        return true;
+    }
+    return false;
 }
 
