@@ -11,6 +11,8 @@ ApplicationWindow {
     height: 480
     title: qsTr("CuteGenericModel example app")
 
+    property int counter: 1
+
     menuBar: MenuBar {
         Menu {
             title: "File"
@@ -40,10 +42,17 @@ ApplicationWindow {
             }
 
             Action {
-                text: "From component"
+                text: "Append from component"
                 onTriggered: {
-                    var tmp=dic.createObject(diModel);
+                    var tmp=dic.createObject(diModel, { "id": counter++ });
                     diModel.append(tmp)
+                }
+            }
+            Action {
+                text: "Prepend from component"
+                onTriggered: {
+                    var tmp=dic.createObject(diModel, { "id": counter++ });
+                    diModel.prepend(tmp)
                 }
             }
 
@@ -80,6 +89,12 @@ ApplicationWindow {
             vec3: Qt.vector3d(50,60,70)
             vec4: Qt.vector4d(1,2,3,4)
         }
+    }
+
+    DummyItemModel {
+        id: qModel
+
+        //DummyItem { }
     }
 
     header: ToolBar {
