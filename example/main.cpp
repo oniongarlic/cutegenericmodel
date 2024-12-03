@@ -85,6 +85,10 @@ int main(int argc, char *argv[])
 
     dim2.setList(data);
 
+    for (int i=0;i<dim2.count();i++) {
+        qDebug() << dim2[i];
+    }
+
     QQmlApplicationEngine engine;
 
     engine.rootContext()->setContextProperty("diModel", &dim1);

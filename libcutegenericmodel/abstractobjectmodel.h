@@ -35,6 +35,7 @@ public:
     Q_INVOKABLE QObject *getObject(int index) const;
     Q_INVOKABLE QObject *getKey(const QString key) const;
     Q_INVOKABLE QObject *getId(int id);
+    QObject *operator[](qsizetype index) const;
 
     Q_INVOKABLE bool append(QObject *item);
     Q_INVOKABLE bool prepend(QObject *item);

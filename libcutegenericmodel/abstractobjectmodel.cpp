@@ -118,6 +118,11 @@ QObject *AbstractObjectModel::getId(int id)
     return nullptr;
 }
 
+QObject *AbstractObjectModel::operator [](qsizetype index) const
+{
+    return getObject(index);
+}
+
 QHash<int, QByteArray> AbstractObjectModel::roleNames() const
 {
     return m_properties;
